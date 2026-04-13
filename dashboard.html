@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Tools Dashboard</title>
+<style>
+  @font-face {
+    font-family: 'Excalifont';
+    src: url('https://excalidraw.nyc3.cdn.digitaloceanspaces.com/fonts/Excalifont-Regular.woff2') format('woff2');
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Virgil';
+    src: url('https://raw.githubusercontent.com/excalidraw/virgil/main/Virgil.woff2') format('woff2');
+    font-display: swap;
+  }
+  @import url('https://cdn.jsdelivr.net/npm/lxgw-wenkai-tc-web@latest/lxgwwenkaitc-regular/result.css');
+  @import url('https://cdn.jsdelivr.net/npm/comic-mono@0.0.1/index.css');
+
+  :root {
+    --bg: #0b0d11;
+    --surface: #151821;
+    --surface2: #1e2230;
+    --surface3: #262b3a;
+    --border: #2a2f40;
+    --border-hover: #3d4460;
+    --text: #e4e4e7;
+    --text-muted: #8b8fa4;
+    --text-dim: #5c6078;
+    --accent: #818cf8;
+    --accent2: #a78bfa;
+    --green: #34d399;
+    --yellow: #fbbf24;
+    --red: #f87171;
+    --blue: #60a5fa;
+    --cyan: #22d3ee;
+    --orange: #fb923c;
+    --pink: #f472b6;
+    --font-hand: 'Excalifont', 'Virgil', 'LXGW WenKai TC', sans-serif;
+    --font-cjk: 'LXGW WenKai TC', 'Excalifont', sans-serif;
+    --font-code: 'Comic Mono', monospace;
+    --font-mixed: 'Excalifont', 'LXGW WenKai TC', 'Virgil', sans-serif;
+    --radius: 12px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-mixed);
+    line-height: 1.6;
+  }
+
+  /* ===== HEADER ===== */
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(11,13,17,0.82);
+    backdrop-filter: blur(16px) saturate(1.4);
+    -webkit-backdrop-filter: blur(16px) saturate(1.4);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 32px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  .header-logo {
+    font-family: var(--font-hand);
+    font-size: 1.5rem;
+    color: var(--accent);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .header-logo span { color: var(--text-muted); font-size: 1rem; margin-left: 6px; }
+  .search-wrap {
+    flex: 1;
+    max-width: 520px;
+    position: relative;
+  }
+  .search-wrap .search-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-dim);
+    font-size: 0.9rem;
+  }
+  .search-wrap input {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 14px 10px 38px;
+    font-family: var(--font-mixed);
+    font-size: 0.95rem;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .search-wrap input::placeholder { color: var(--text-dim); }
+  .search-wrap input:focus { border-color: var(--accent); }
+  .search-wrap .kbd {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--surface3);
+    color: var(--text-dim);
+    font-family: var(--font-code);
+    font-size: 0.7rem;
+    padding: 2px 7px;
+    border-radius: 5px;
+    border: 1px solid var(--border);
+  }
+  .nav-links {
+    display: flex;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+  .nav-links a {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.85rem;
+    padding: 6px 12px;
+    border-radius: 8px;
+    transition: all 0.15s;
+    font-family: var(--font-hand);
+  }
+  .nav-links a:hover { background: var(--surface2); color: var(--text); }
+
+  /* ===== CONTAINER ===== */
+  .container { max-width: 1200px; margin: 0 auto; padding: 32px 28px 60px; }
+
+  /* ===== SECTION ===== */
+  .section { margin-bottom: 44px; }
+  .section-title {
+    font-family: var(--font-hand);
+    font-size: 1.45rem;
+    color: var(--text);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-title .icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+  .section-title .count {
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    background: var(--surface2);
+    padding: 2px 10px;
+    border-radius: 10px;
+    font-family: var(--font-code);
+  }
+
+  /* ===== QUICK LAUNCH ===== */
+  .launch-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 14px;
+  }
+  .launch-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .launch-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    border-radius: var(--radius) var(--radius) 0 0;
+  }
+  .launch-card:hover {
+    border-color: var(--border-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+  }
+  .launch-card .lc-icon {
+    font-size: 1.6rem;
+    margin-bottom: 10px;
+  }
+  .launch-card .lc-name {
+    font-family: var(--font-hand);
+    font-size: 1.2rem;
+    margin-bottom: 4px;
+  }
+  .launch-card .lc-desc {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+    font-family: var(--font-cjk);
+  }
+  .launch-card .lc-cmd {
+    font-family: var(--font-code);
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    background: var(--surface2);
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 6px;
+  }
+  .lc-indigo::before { background: linear-gradient(90deg, #818cf8, #6366f1); }
+  .lc-purple::before { background: linear-gradient(90deg, #a78bfa, #8b5cf6); }
+  .lc-cyan::before   { background: linear-gradient(90deg, #22d3ee, #06b6d4); }
+  .lc-green::before  { background: linear-gradient(90deg, #34d399, #10b981); }
+  .lc-orange::before { background: linear-gradient(90deg, #fb923c, #f97316); }
+  .lc-pink::before   { background: linear-gradient(90deg, #f472b6, #ec4899); }
+
+  /* ===== SKILL GRID ===== */
+  .skill-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 10px;
+  }
+  .skill-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .skill-card:hover {
+    border-color: var(--accent);
+    background: var(--surface2);
+  }
+  .skill-card .sc-name {
+    font-family: var(--font-code);
+    font-size: 0.88rem;
+    color: var(--accent);
+  }
+  .skill-card .sc-desc {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    font-family: var(--font-cjk);
+    line-height: 1.4;
+  }
+  .skill-card .sc-tag {
+    display: inline-block;
+    font-size: 0.68rem;
+    color: var(--text-dim);
+    background: var(--surface3);
+    padding: 1px 8px;
+    border-radius: 6px;
+    font-family: var(--font-code);
+    align-self: flex-start;
+    margin-top: 2px;
+  }
+
+  /* ===== HERMES CATEGORIES ===== */
+  .cat-group {
+    margin-bottom: 8px;
+  }
+  .cat-group summary {
+    cursor: pointer;
+    padding: 10px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font-family: var(--font-mixed);
+    font-size: 0.95rem;
+    color: var(--text);
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.15s;
+    user-select: none;
+  }
+  .cat-group summary::-webkit-details-marker { display: none; }
+  .cat-group summary:hover { background: var(--surface2); border-color: var(--border-hover); }
+  .cat-group summary .chevron {
+    margin-left: auto;
+    color: var(--text-dim);
+    font-size: 0.8rem;
+    transition: transform 0.2s;
+  }
+  .cat-group[open] summary .chevron { transform: rotate(90deg); }
+  .cat-group[open] summary { border-radius: 10px 10px 0 0; border-bottom-color: transparent; }
+  .cat-group .cat-body {
+    border: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 10px 10px;
+    padding: 12px;
+    background: var(--surface);
+  }
+  .cat-count {
+    font-family: var(--font-code);
+    font-size: 0.72rem;
+    background: var(--surface3);
+    padding: 1px 8px;
+    border-radius: 8px;
+    color: var(--text-dim);
+  }
+  .cat-icon { font-size: 1rem; }
+
+  /* ===== MCP CARDS ===== */
+  .mcp-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 12px;
+  }
+  .mcp-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 20px;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .mcp-card:hover { border-color: var(--accent); }
+  .mcp-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 5px;
+  }
+  .mcp-dot.active { background: var(--green); box-shadow: 0 0 8px rgba(52,211,153,0.4); }
+  .mcp-dot.warn { background: var(--yellow); }
+  .mcp-dot.off { background: var(--text-dim); }
+  .mcp-info .mcp-name { font-family: var(--font-hand); font-size: 1.05rem; }
+  .mcp-info .mcp-cmd { font-family: var(--font-code); font-size: 0.78rem; color: var(--text-dim); margin-top: 2px; }
+  .mcp-info .mcp-desc { font-size: 0.82rem; color: var(--text-muted); margin-top: 4px; font-family: var(--font-cjk); }
+
+  /* ===== STATUS ===== */
+  .status-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 8px;
+  }
+  .status-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 0.88rem;
+  }
+  .status-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .status-dot.ok { background: var(--green); }
+  .status-dot.warn { background: var(--yellow); }
+  .status-dot.err { background: var(--red); }
+  .status-label { color: var(--text-muted); font-family: var(--font-cjk); }
+  .status-val { margin-left: auto; font-family: var(--font-code); font-size: 0.78rem; color: var(--text-dim); }
+
+  /* ===== TOAST ===== */
+  .toast {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    background: var(--surface3);
+    border: 1px solid var(--border-hover);
+    color: var(--text);
+    font-family: var(--font-code);
+    font-size: 0.85rem;
+    padding: 12px 20px;
+    border-radius: 10px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    opacity: 0;
+    transform: translateY(12px);
+    transition: all 0.25s;
+    pointer-events: none;
+    z-index: 999;
+  }
+  .toast.show { opacity: 1; transform: translateY(0); }
+
+  /* ===== HIDDEN ===== */
+  .hidden { display: none !important; }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 768px) {
+    .header { padding: 10px 16px; gap: 10px; flex-wrap: wrap; }
+    .nav-links { display: none; }
+    .container { padding: 20px 14px 40px; }
+    .launch-grid { grid-template-columns: 1fr 1fr; }
+    .skill-grid { grid-template-columns: 1fr; }
+  }
+
+  @media print {
+    .header { position: static; backdrop-filter: none; }
+    body { background: white; color: black; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <div class="header-logo">AI Tools Dashboard <span>v1.0</span></div>
+  <div class="search-wrap">
+    <span class="search-icon">&#128269;</span>
+    <input type="search" id="searchInput" placeholder="Search skills, tools, commands..." autocomplete="off">
+    <span class="kbd">/</span>
+  </div>
+  <nav class="nav-links">
+    <a href="#quick-launch">Launch</a>
+    <a href="#claude-skills">Claude</a>
+    <a href="#hermes-skills">Hermes</a>
+    <a href="#mcp-servers">MCP</a>
+    <a href="#system-status">Status</a>
+  </nav>
+</div>
+
+<div class="container">
+
+  <!-- Quick Launch -->
+  <div class="section" id="quick-launch">
+    <div class="section-title">
+      <div class="icon" style="background:rgba(129,140,248,0.15);color:var(--accent);">&#9889;</div>
+      Quick Launch
+    </div>
+    <div class="launch-grid" id="launchGrid"></div>
+  </div>
+
+  <!-- Claude Code Skills -->
+  <div class="section" id="claude-skills">
+    <div class="section-title">
+      <div class="icon" style="background:rgba(129,140,248,0.15);color:var(--accent);">&#9998;</div>
+      Claude Code Skills
+      <span class="count" id="claudeCount"></span>
+    </div>
+    <div class="skill-grid" id="claudeGrid"></div>
+  </div>
+
+  <!-- Hermes Agent Skills -->
+  <div class="section" id="hermes-skills">
+    <div class="section-title">
+      <div class="icon" style="background:rgba(167,139,250,0.15);color:var(--accent2);">&#9764;</div>
+      Hermes Agent Skills
+      <span class="count" id="hermesCount"></span>
+    </div>
+    <div id="hermesContainer"></div>
+  </div>
+
+  <!-- MCP Servers -->
+  <div class="section" id="mcp-servers">
+    <div class="section-title">
+      <div class="icon" style="background:rgba(34,211,238,0.15);color:var(--cyan);">&#128268;</div>
+      MCP Servers
+    </div>
+    <div class="mcp-grid" id="mcpGrid"></div>
+  </div>
+
+  <!-- System Status -->
+  <div class="section" id="system-status">
+    <div class="section-title">
+      <div class="icon" style="background:rgba(52,211,153,0.15);color:var(--green);">&#9879;</div>
+      System Status
+    </div>
+    <div class="status-grid" id="statusGrid"></div>
+  </div>
+
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ===== DATA =====
+
+const launchItems = [
+  { icon: ">_", name: "Claude Code", desc: "AI coding assistant", cmd: "claude", color: "lc-indigo" },
+  { icon: "\u2694", name: "Hermes Agent", desc: "Multi-skill AI agent (78 skills)", cmd: "hermes chat", color: "lc-purple" },
+  { icon: "\u2708", name: "Flight Search", desc: "Google Flights MCP", cmd: "fli flights TPE NRT 2026-06-01", color: "lc-cyan" },
+  { icon: "\u270D", name: "Handnote", desc: "\u624B\u5BEB\u7B46\u8A18\u751F\u6210\u5668", cmd: "/handnote", color: "lc-orange" },
+  { icon: "\u{1F4BC}", name: "Job Hunt", desc: "LinkedIn \u804C\u7F3A\u641C\u5C0B + CV", cmd: "/job-hunt", color: "lc-green" },
+  { icon: "\u{1F3ED}", name: "MES Setup", desc: "MES \u7CFB\u7D71\u5EFA\u7F6E", cmd: "/mes-setup", color: "lc-pink" },
+];
+
+const claudeSkills = [
+  { name: "handnote", desc: "Excalidraw \u98A8\u683C\u624B\u5BEB\u7B46\u8A18 HTML \u751F\u6210\u5668", cat: "creative" },
+  { name: "job-hunt", desc: "LinkedIn \u804C\u7F3A\u641C\u5C0B + \u5C65\u6B77\u5B9A\u88FD", cat: "productivity" },
+  { name: "mes-setup", desc: "MES \u7CFB\u7D71\u5EFA\u7F6E (Kotlin/React/PostgreSQL)", cat: "dev" },
+  { name: "frontend-design", desc: "\u751F\u7522\u7D1A\u524D\u7AEF\u754C\u9762\u8A2D\u8A08", cat: "design" },
+  { name: "deploy-to-vercel", desc: "\u90E8\u7F72\u61C9\u7528\u7A0B\u5F0F\u5230 Vercel", cat: "deploy" },
+  { name: "ffmpeg", desc: "FFmpeg \u5F71\u97F3\u8655\u7406", cat: "media" },
+  { name: "video-edit", desc: "\u672C\u5730\u5F71\u7247\u526A\u8F2F", cat: "media" },
+  { name: "ai-music-generation", desc: "AI \u97F3\u6A02\u751F\u6210 (ElevenLabs/Diffrythm)", cat: "creative" },
+  { name: "find-skills", desc: "\u641C\u5C0B\u4E26\u5B89\u88DD\u65B0 Skills", cat: "meta" },
+  { name: "trending-skills", desc: "\u767C\u73FE\u71B1\u9580 GitHub \u5C08\u6848", cat: "research" },
+  { name: "remotion-best-practices", desc: "Remotion \u5F71\u7247\u88FD\u4F5C\u6700\u4F73\u5BE6\u8E10", cat: "dev" },
+  { name: "web-design-guidelines", desc: "UI \u8A2D\u8A08\u6AA2\u67E5", cat: "design" },
+  { name: "vercel-react-best-practices", desc: "React/Next.js \u6548\u80FD\u6700\u4F73\u5316", cat: "dev" },
+  { name: "vercel-react-native-skills", desc: "React Native/Expo \u6700\u4F73\u5BE6\u8E10", cat: "dev" },
+  { name: "vercel-composition-patterns", desc: "React \u7D44\u5408\u6A21\u5F0F", cat: "dev" },
+];
+
+const hermesSkills = {
+  "Apple \u751F\u614B\u7CFB": { icon: "\uF8FF", skills: [
+    { name: "apple-notes", desc: "Apple \u5099\u5FD8\u9304\u7BA1\u7406" },
+    { name: "apple-reminders", desc: "Apple \u63D0\u9192\u4E8B\u9805" },
+    { name: "imessage", desc: "iMessage / SMS \u8A0A\u606F" },
+    { name: "findmy", desc: "\u5C0B\u627E\u88DD\u7F6E / AirTag" },
+  ]},
+  "\u8EDF\u9AD4\u958B\u767C": { icon: "\u{1F4BB}", skills: [
+    { name: "plan", desc: "\u8A08\u756B\u6A21\u5F0F\u2014\u53EA\u5206\u6790\u4E0D\u4FEE\u6539\u7A0B\u5F0F\u78BC" },
+    { name: "writing-plans", desc: "\u64B0\u5BEB\u8A73\u7D30\u5BE6\u4F5C\u8A08\u756B" },
+    { name: "test-driven-development", desc: "TDD \u958B\u767C\u6D41\u7A0B" },
+    { name: "systematic-debugging", desc: "\u56DB\u968E\u6BB5\u7CFB\u7D71\u5316\u9664\u932F" },
+    { name: "subagent-driven-development", desc: "\u591A Agent \u5354\u4F5C\u958B\u767C" },
+    { name: "requesting-code-review", desc: "\u7A0B\u5F0F\u78BC\u5BE9\u67E5" },
+  ]},
+  "GitHub \u6574\u5408": { icon: "\u{1F419}", skills: [
+    { name: "github-auth", desc: "GitHub \u8A8D\u8B49\u8A2D\u5B9A" },
+    { name: "github-repo-management", desc: "Repo \u7BA1\u7406 (Clone/Create/Fork)" },
+    { name: "github-pr-workflow", desc: "PR \u5B8C\u6574\u751F\u547D\u9031\u671F" },
+    { name: "github-code-review", desc: "Code Review" },
+    { name: "github-issues", desc: "Issue \u7BA1\u7406" },
+    { name: "codebase-inspection", desc: "\u7A0B\u5F0F\u78BC\u7D71\u8A08\u5206\u6790" },
+  ]},
+  "\u5275\u610F\u5DE5\u5177": { icon: "\u{1F3A8}", skills: [
+    { name: "ascii-art", desc: "ASCII \u85DD\u8853\u751F\u6210 (571 \u5B57\u9AD4)" },
+    { name: "ascii-video", desc: "\u5F71\u7247\u8F49 ASCII \u52D5\u756B" },
+    { name: "excalidraw", desc: "\u624B\u7E6A\u98A8\u683C\u5716\u8868" },
+    { name: "ideation", desc: "\u8166\u529B\u6FC0\u76EA / \u5275\u610F\u767C\u60F3" },
+    { name: "manim-video", desc: "3Blue1Brown \u98A8\u683C\u6578\u5B78\u52D5\u756B" },
+    { name: "p5js", desc: "p5.js \u4E92\u52D5\u8996\u89BA\u85DD\u8853" },
+    { name: "popular-web-designs", desc: "54 \u5957\u77E5\u540D\u7DB2\u7AD9\u8A2D\u8A08\u6A21\u677F" },
+    { name: "songwriting-and-ai-music", desc: "AI \u97F3\u6A02\u5275\u4F5C / \u6B4C\u8A5E\u5BEB\u4F5C" },
+  ]},
+  "\u5A92\u9AD4\u8655\u7406": { icon: "\u{1F3AC}", skills: [
+    { name: "gif-search", desc: "Tenor GIF \u641C\u5C0B" },
+    { name: "heartmula", desc: "\u958B\u6E90 AI \u97F3\u6A02\u751F\u6210" },
+    { name: "songsee", desc: "\u97F3\u8A0A\u983B\u8B5C\u8996\u89BA\u5316" },
+    { name: "youtube-content", desc: "YouTube \u5F71\u7247\u5B57\u5E55\u64F7\u53D6\u8207\u6458\u8981" },
+  ]},
+  "\u7814\u7A76\u8207\u5B78\u8853": { icon: "\u{1F4DA}", skills: [
+    { name: "arxiv", desc: "arXiv \u8AD6\u6587\u641C\u5C0B / \u4E0B\u8F09" },
+    { name: "blogwatcher", desc: "\u90E8\u843D\u683C\u66F4\u65B0\u76E3\u63A7" },
+    { name: "llm-wiki", desc: "LLM \u77E5\u8B58\u767E\u79D1" },
+    { name: "polymarket", desc: "\u9810\u6E2C\u5E02\u5834\u67E5\u8A62" },
+    { name: "research-paper-writing", desc: "\u5B78\u8853\u8AD6\u6587\u64B0\u5BEB (NeurIPS/ICML)" },
+  ]},
+  "\u751F\u7522\u529B\u5DE5\u5177": { icon: "\u{1F6E0}", skills: [
+    { name: "obsidian", desc: "Obsidian \u7B46\u8A18\u7BA1\u7406" },
+    { name: "himalaya", desc: "CLI Email \u5BA2\u6236\u7AEF (IMAP/SMTP)" },
+    { name: "notion", desc: "Notion \u9801\u9762\u8207\u8CC7\u6599\u5EAB" },
+    { name: "linear", desc: "Linear \u5C08\u6848\u7BA1\u7406" },
+    { name: "nano-pdf", desc: "PDF \u8B80\u53D6\u8207\u5206\u6790" },
+    { name: "powerpoint", desc: "PowerPoint \u7C21\u5831\u88FD\u4F5C" },
+    { name: "google-workspace", desc: "Google Docs / Sheets / Drive" },
+    { name: "ocr-and-documents", desc: "OCR \u6587\u5B57\u8FA8\u8B58" },
+  ]},
+  "MLOps / AI": { icon: "\u{1F9E0}", skills: [
+    { name: "huggingface-hub", desc: "HuggingFace \u6A21\u578B/Dataset \u7BA1\u7406" },
+    { name: "whisper", desc: "Whisper \u8A9E\u97F3\u8F49\u6587\u5B57" },
+    { name: "fine-tuning-with-trl", desc: "TRL \u5FAE\u8ABF (SFT/DPO/PPO)" },
+    { name: "unsloth", desc: "2-5x \u52A0\u901F\u5FAE\u8ABF" },
+    { name: "axolotl", desc: "YAML \u8A2D\u5B9A\u5F0F LLM \u5FAE\u8ABF" },
+    { name: "grpo-rl-training", desc: "GRPO \u5F37\u5316\u5B78\u7FD2" },
+    { name: "peft-fine-tuning", desc: "LoRA / QLoRA \u53C3\u6578\u9AD8\u6548\u5FAE\u8ABF" },
+    { name: "pytorch-fsdp", desc: "PyTorch FSDP \u5206\u6563\u5F0F\u8A13\u7DF4" },
+    { name: "stable-diffusion-image-generation", desc: "Stable Diffusion \u5716\u7247\u751F\u6210" },
+    { name: "serving-llms-vllm", desc: "vLLM LLM \u63A8\u7406\u90E8\u7F72" },
+    { name: "dspy", desc: "DSPy \u7A0B\u5F0F\u5316 LLM Pipeline" },
+    { name: "clip", desc: "CLIP \u5716\u6587\u5339\u914D" },
+    { name: "audiocraft-audio-generation", desc: "Meta MusicGen / AudioGen" },
+    { name: "segment-anything-model", desc: "Meta SAM \u5F71\u50CF\u5206\u5272" },
+    { name: "modal-serverless-gpu", desc: "Modal \u96F2\u7AEF\u7121\u4F3A\u670D\u5668 GPU" },
+    { name: "guidance", desc: "Guidance \u7D50\u69CB\u5316 LLM \u8F38\u51FA" },
+    { name: "gguf-quantization", desc: "GGUF \u6A21\u578B\u91CF\u5316" },
+    { name: "llama-cpp", desc: "llama.cpp \u672C\u5730\u63A8\u7406" },
+    { name: "outlines", desc: "Outlines \u7D50\u69CB\u5316\u751F\u6210" },
+    { name: "evaluating-llms-harness", desc: "LLM \u8A55\u4F30" },
+    { name: "weights-and-biases", desc: "W&B \u5BE6\u9A57\u8FFD\u8E64" },
+    { name: "obliteratus", desc: "LLM \u6A21\u578B\u58D3\u7E2E" },
+  ]},
+  "MCP \u6574\u5408": { icon: "\u{1F50C}", skills: [
+    { name: "mcporter", desc: "MCP \u5DE5\u5177\u767C\u73FE\u8207\u5373\u6642\u547C\u53EB" },
+    { name: "native-mcp", desc: "\u539F\u751F MCP \u5BA2\u6236\u7AEF" },
+  ]},
+  "\u81EA\u4E3B AI Agent": { icon: "\u{1F916}", skills: [
+    { name: "claude-code", desc: "\u59D4\u6D3E\u7D66 Claude Code CLI" },
+    { name: "codex", desc: "\u59D4\u6D3E\u7D66 OpenAI Codex CLI" },
+    { name: "hermes-agent", desc: "Hermes \u81EA\u6211\u59D4\u6D3E" },
+    { name: "opencode", desc: "OpenCode \u81EA\u4E3B\u7A0B\u5F0F\u78BC Agent" },
+  ]},
+  "\u5176\u4ED6\u5DE5\u5177": { icon: "\u{1F527}", skills: [
+    { name: "webhook-subscriptions", desc: "Webhook \u4E8B\u4EF6\u8A02\u95B1" },
+    { name: "find-nearby", desc: "\u9644\u8FD1\u5730\u9EDE\u641C\u5C0B (OpenStreetMap)" },
+    { name: "jupyter-live-kernel", desc: "Jupyter \u5373\u6642 Python REPL" },
+    { name: "godmode", desc: "LLM \u7D05\u968A\u5B89\u5168\u6E2C\u8A66" },
+    { name: "openhue", desc: "Philips Hue \u667A\u6167\u71C8\u63A7\u5236" },
+    { name: "xitter", desc: "X/Twitter \u793E\u7FA4\u7BA1\u7406" },
+    { name: "dogfood", desc: "Hermes \u5167\u90E8\u81EA\u6211\u6E2C\u8A66" },
+  ]},
+};
+
+const mcpServers = [
+  { name: "flight-search", cmd: "fli-mcp", desc: "Google Flights \u822A\u73ED\u641C\u5C0B\uFF08\u514D\u8CBB\uFF0C\u7121\u9700 API Key\uFF09", status: "active", copy: "fli flights TPE NRT 2026-06-01" },
+  { name: "gmail", cmd: "mcp__claude_ai_Gmail", desc: "Gmail \u90F5\u4EF6\u6574\u5408\uFF08\u9700 OAuth \u8A8D\u8B49\uFF09", status: "warn", copy: "Gmail MCP" },
+  { name: "google-calendar", cmd: "mcp__claude_ai_Google_Calendar", desc: "Google Calendar \u884C\u4E8B\u66C6\u6574\u5408\uFF08\u9700 OAuth \u8A8D\u8B49\uFF09", status: "warn", copy: "Google Calendar MCP" },
+];
+
+const systemStatus = [
+  { label: "Claude Code", val: "claude CLI", dot: "ok" },
+  { label: "Hermes Agent", val: "hermes CLI", dot: "ok" },
+  { label: "Model", val: "claude-opus-4.6", dot: "ok" },
+  { label: "Hermes Provider", val: "anthropic (direct)", dot: "ok" },
+  { label: "Python", val: "3.11.15", dot: "ok" },
+  { label: "Node.js", val: "v24.13.1", dot: "ok" },
+  { label: "Git", val: "2.50.1", dot: "ok" },
+  { label: "ripgrep", val: "15.1.0", dot: "ok" },
+  { label: "ffmpeg", val: "8.1", dot: "ok" },
+  { label: "MCP: flight-search", val: "fli-mcp (stdio)", dot: "ok" },
+  { label: "Claude Skills", val: "15 installed", dot: "ok" },
+  { label: "Hermes Skills", val: "78 built-in", dot: "ok" },
+  { label: "Web Tools", val: "\u7F3A EXA/TAVILY key", dot: "warn" },
+  { label: "Vision", val: "\u7F3A\u7CFB\u7D71\u4F9D\u8CF4", dot: "warn" },
+];
+
+// ===== RENDER =====
+
+function renderLaunch() {
+  document.getElementById('launchGrid').innerHTML = launchItems.map(i => `
+    <div class="launch-card ${i.color}" data-search="${i.name} ${i.desc} ${i.cmd}" onclick="copy('${i.cmd}')">
+      <div class="lc-icon">${i.icon}</div>
+      <div class="lc-name">${i.name}</div>
+      <div class="lc-desc">${i.desc}</div>
+      <div class="lc-cmd">${i.cmd}</div>
+    </div>
+  `).join('');
+}
+
+function renderClaude() {
+  const el = document.getElementById('claudeGrid');
+  document.getElementById('claudeCount').textContent = claudeSkills.length;
+  el.innerHTML = claudeSkills.map(s => `
+    <div class="skill-card" data-search="${s.name} ${s.desc} ${s.cat} claude" onclick="copy('/${s.name}')">
+      <div class="sc-name">/${s.name}</div>
+      <div class="sc-desc">${s.desc}</div>
+      <div class="sc-tag">${s.cat}</div>
+    </div>
+  `).join('');
+}
+
+function renderHermes() {
+  const el = document.getElementById('hermesContainer');
+  let total = 0;
+  let html = '';
+  for (const [cat, data] of Object.entries(hermesSkills)) {
+    total += data.skills.length;
+    html += `
+      <details class="cat-group">
+        <summary data-search="${cat} ${data.skills.map(s=>s.name+' '+s.desc).join(' ')} hermes">
+          <span class="cat-icon">${data.icon}</span>
+          ${cat}
+          <span class="cat-count">${data.skills.length}</span>
+          <span class="chevron">&#9654;</span>
+        </summary>
+        <div class="cat-body">
+          <div class="skill-grid">
+            ${data.skills.map(s => `
+              <div class="skill-card" data-search="${s.name} ${s.desc} ${cat} hermes" onclick="copy('${s.name}')">
+                <div class="sc-name">${s.name}</div>
+                <div class="sc-desc">${s.desc}</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      </details>
+    `;
+  }
+  el.innerHTML = html;
+  document.getElementById('hermesCount').textContent = total + ' skills \u00b7 ' + Object.keys(hermesSkills).length + ' categories';
+}
+
+function renderMCP() {
+  document.getElementById('mcpGrid').innerHTML = mcpServers.map(m => `
+    <div class="mcp-card" data-search="${m.name} ${m.cmd} ${m.desc} mcp" onclick="copy('${m.copy}')">
+      <div class="mcp-dot ${m.status}"></div>
+      <div class="mcp-info">
+        <div class="mcp-name">${m.name}</div>
+        <div class="mcp-cmd">${m.cmd}</div>
+        <div class="mcp-desc">${m.desc}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderStatus() {
+  document.getElementById('statusGrid').innerHTML = systemStatus.map(s => `
+    <div class="status-row" data-search="${s.label} ${s.val} status">
+      <div class="status-dot ${s.dot}"></div>
+      <span class="status-label">${s.label}</span>
+      <span class="status-val">${s.val}</span>
+    </div>
+  `).join('');
+}
+
+// ===== CLIPBOARD & TOAST =====
+
+function copy(text) {
+  navigator.clipboard.writeText(text).then(() => showToast('Copied: ' + text)).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = text; document.body.appendChild(ta); ta.select();
+    document.execCommand('copy'); document.body.removeChild(ta);
+    showToast('Copied: ' + text);
+  });
+}
+
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+// ===== SEARCH =====
+
+function filterAll(q) {
+  const query = q.toLowerCase().trim();
+  document.querySelectorAll('[data-search]').forEach(el => {
+    if (!query) { el.classList.remove('hidden'); return; }
+    const match = el.dataset.search.toLowerCase().includes(query);
+    el.classList.toggle('hidden', !match);
+  });
+  // Show/hide category groups based on children visibility
+  document.querySelectorAll('.cat-group').forEach(g => {
+    const summary = g.querySelector('summary');
+    const cards = g.querySelectorAll('.skill-card');
+    const anyVisible = [...cards].some(c => !c.classList.contains('hidden'));
+    if (query && anyVisible) { g.open = true; g.classList.remove('hidden'); }
+    else if (query && !anyVisible) { g.classList.add('hidden'); }
+    else { g.classList.remove('hidden'); g.open = false; }
+  });
+}
+
+// ===== INIT =====
+
+document.addEventListener('DOMContentLoaded', () => {
+  renderLaunch();
+  renderClaude();
+  renderHermes();
+  renderMCP();
+  renderStatus();
+
+  const input = document.getElementById('searchInput');
+  input.addEventListener('input', e => filterAll(e.target.value));
+
+  document.addEventListener('keydown', e => {
+    if (e.key === '/' && document.activeElement !== input) {
+      e.preventDefault();
+      input.focus();
+    }
+    if (e.key === 'Escape') {
+      input.value = '';
+      filterAll('');
+      input.blur();
+    }
+  });
+});
+</script>
+
+</body>
+</html>

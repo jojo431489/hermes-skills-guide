@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Japan Trip Note - 5/28~6/1</title>
+<style>
+  /* ===== Excalidraw Font Stack =====
+     1. Excalifont    — Excalidraw 預設手寫字體（Latin/Greek/Cyrillic）
+     2. Virgil        — Excalidraw 舊版手寫字體（備用）
+     3. LXGW WenKai TC — 霞鶩文楷 繁體（CJK 手寫風，取代 Xiaolai 用於網頁）
+     4. Comic Mono    — Comic Shanns 衍生等寬字體（程式碼/數據用）
+  */
+
+  @font-face {
+    font-family: 'Excalifont';
+    src: url('https://excalidraw.nyc3.cdn.digitaloceanspaces.com/fonts/Excalifont-Regular.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'Virgil';
+    src: url('https://raw.githubusercontent.com/excalidraw/virgil/main/Virgil.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  /* LXGW WenKai TC — 繁體中文手寫風（cn-font-split 分塊 lazy load） */
+  @import url('https://cdn.jsdelivr.net/npm/lxgw-wenkai-tc-web@latest/lxgwwenkaitc-regular/result.css');
+
+  /* Comic Mono — Excalidraw Code font 的 web 版 */
+  @import url('https://cdn.jsdelivr.net/npm/comic-mono@0.0.1/index.css');
+
+  :root {
+    /* Excalidraw-aligned font stacks */
+    --font-hand: 'Excalifont', 'Virgil', 'LXGW WenKai TC', sans-serif;
+    --font-cjk: 'LXGW WenKai TC', 'Excalifont', sans-serif;
+    --font-code: 'Comic Mono', 'Comic Shanns', monospace;
+    --font-mixed: 'Excalifont', 'LXGW WenKai TC', 'Virgil', sans-serif;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #d4c5a9;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 30px;
+    font-family: var(--font-mixed);
+  }
+
+  .page {
+    width: 780px;
+    min-height: 1050px;
+    background: #fffef5;
+    position: relative;
+    padding: 60px 70px 50px 90px;
+    box-shadow:
+      2px 2px 8px rgba(0,0,0,0.15),
+      inset 0 0 60px rgba(200,180,140,0.15);
+    transform: rotate(-0.3deg);
+  }
+
+  /* Red margin line */
+  .page::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 72px;
+    width: 2px;
+    height: 100%;
+    background: rgba(220,80,80,0.25);
+  }
+
+  /* Blue ruled lines */
+  .lines {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      transparent,
+      transparent 35px,
+      rgba(120,160,210,0.18) 35px,
+      rgba(120,160,210,0.18) 36px
+    );
+    background-position-y: 22px;
+  }
+
+  /* Washi tape */
+  .tape {
+    position: absolute;
+    width: 140px;
+    height: 32px;
+    z-index: 2;
+  }
+  .tape-tl {
+    top: -8px; left: 30px;
+    transform: rotate(-8deg);
+    background: repeating-linear-gradient(
+      45deg,
+      rgba(255,200,120,0.45),
+      rgba(255,200,120,0.45) 4px,
+      rgba(255,220,160,0.35) 4px,
+      rgba(255,220,160,0.35) 8px
+    );
+    border: 1px solid rgba(200,160,80,0.15);
+  }
+  .tape-tr {
+    top: -6px; right: 25px;
+    transform: rotate(5deg);
+    background: repeating-linear-gradient(
+      -45deg,
+      rgba(180,210,255,0.4),
+      rgba(180,210,255,0.4) 4px,
+      rgba(200,225,255,0.3) 4px,
+      rgba(200,225,255,0.3) 8px
+    );
+    border: 1px solid rgba(140,170,220,0.15);
+  }
+
+  /* Coffee ring */
+  .coffee-stain {
+    position: absolute;
+    bottom: 55px;
+    right: 45px;
+    width: 95px;
+    height: 95px;
+    border-radius: 50%;
+    border: 3px solid rgba(140,100,50,0.1);
+    background: radial-gradient(circle, rgba(160,120,60,0.03) 40%, transparent 70%);
+    transform: rotate(15deg);
+  }
+
+  /* Spiral holes */
+  .holes {
+    position: absolute;
+    left: 28px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  .hole {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(0,0,0,0.07);
+    background: #d4c5a9;
+    margin: 80px 0;
+    box-shadow: inset 1px 1px 2px rgba(0,0,0,0.06);
+  }
+
+  .content { position: relative; z-index: 1; }
+
+  /* Title — Excalifont for Latin, LXGW for CJK */
+  .title {
+    font-size: 2.6rem;
+    font-weight: 400;
+    color: #2c3e50;
+    margin-bottom: 2px;
+    font-family: var(--font-hand);
+    letter-spacing: 1px;
+  }
+  .title .plane {
+    display: inline-block;
+    transform: rotate(-15deg);
+    margin-right: 8px;
+    font-size: 2.2rem;
+  }
+
+  .subtitle {
+    font-size: 1.5rem;
+    color: #7f8c8d;
+    margin-bottom: 18px;
+    font-family: var(--font-hand);
+  }
+
+  .date-badge {
+    display: inline-block;
+    background: #ffeaa7;
+    padding: 5px 16px;
+    border-radius: 4px;
+    font-size: 1.2rem;
+    color: #6c5b0a;
+    transform: rotate(-1deg);
+    margin-bottom: 16px;
+    border: 1.5px dashed #d4b732;
+    font-family: var(--font-mixed);
+  }
+
+  /* Destination cards — roughness feel like Excalidraw */
+  .dest {
+    margin-bottom: 16px;
+    padding: 14px 18px;
+    border-radius: 3px;
+    position: relative;
+  }
+
+  .dest-osaka {
+    background: rgba(116,185,255,0.08);
+    border: 1.5px solid rgba(116,185,255,0.35);
+    border-radius: 2px 6px 4px 3px;
+  }
+  .dest-tokyo {
+    background: rgba(162,155,254,0.08);
+    border: 1.5px solid rgba(162,155,254,0.35);
+    border-radius: 4px 2px 5px 3px;
+  }
+  .dest-fukuoka {
+    background: rgba(253,164,175,0.08);
+    border: 1.5px solid rgba(253,164,175,0.35);
+    border-radius: 3px 5px 2px 4px;
+  }
+
+  .dest-name {
+    font-size: 1.7rem;
+    font-family: var(--font-mixed);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #2d3436;
+  }
+
+  .circled-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 2px solid currentColor;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+    font-family: var(--font-hand);
+  }
+
+  .price-tag {
+    font-size: 1.5rem;
+    font-family: var(--font-code);
+    padding: 0 8px;
+    border-radius: 4px;
+    margin-left: 4px;
+    letter-spacing: -0.5px;
+  }
+  .price-cheap { color: #00b894; }
+  .price-mid { color: #6c5ce7; }
+  .price-high { color: #d63031; }
+
+  .flight-detail {
+    font-size: 1.15rem;
+    color: #555;
+    margin: 5px 0 0 0;
+    font-family: var(--font-mixed);
+    line-height: 1.75;
+  }
+  .flight-detail .label {
+    display: inline-block;
+    width: 28px;
+    color: #333;
+  }
+  .flight-detail .airline {
+    background: rgba(0,0,0,0.04);
+    padding: 1px 8px;
+    border-radius: 3px;
+    font-family: var(--font-code);
+    font-size: 0.95rem;
+    color: #636e72;
+  }
+  .flight-detail .time {
+    font-family: var(--font-code);
+    color: #2d3436;
+    font-size: 1.05rem;
+  }
+
+  .tag {
+    display: inline-block;
+    padding: 1px 10px;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-family: var(--font-hand);
+  }
+  .tag-direct { background: #dfe6e9; color: #636e72; }
+  .tag-best { background: rgba(85,239,196,0.4); color: #00695c; }
+  .tag-cheapest { background: rgba(255,234,167,0.6); color: #6c5b0a; }
+
+  /* Dashed divider */
+  .divider {
+    border: none;
+    height: 2px;
+    background: repeating-linear-gradient(90deg, #bbb 0, #bbb 6px, transparent 6px, transparent 12px);
+    margin: 14px 0;
+    opacity: 0.35;
+  }
+
+  /* Recommendation box — Excalidraw-style rough border */
+  .reco {
+    background: rgba(85,239,196,0.08);
+    border: 2px dashed rgba(0,184,148,0.5);
+    border-radius: 4px 6px 3px 5px;
+    padding: 14px 18px;
+    margin-top: 8px;
+  }
+  .reco-title {
+    font-size: 1.5rem;
+    font-family: var(--font-mixed);
+    color: #00b894;
+    margin-bottom: 6px;
+  }
+  .reco-text {
+    font-size: 1.15rem;
+    font-family: var(--font-cjk);
+    color: #444;
+    line-height: 1.85;
+  }
+
+  /* Highlighter */
+  .hl {
+    background: linear-gradient(transparent 55%, rgba(255,234,167,0.55) 55%);
+    padding: 0 3px;
+  }
+
+  .strikethrough {
+    text-decoration: line-through;
+    text-decoration-color: #e17055;
+    text-decoration-thickness: 2px;
+    color: #aaa;
+  }
+
+  /* Checklist */
+  .checklist {
+    font-family: var(--font-cjk);
+    font-size: 1.15rem;
+    line-height: 2;
+    color: #444;
+  }
+  .checklist .check-title {
+    font-family: var(--font-hand);
+    font-size: 1.25rem;
+    color: #2d3436;
+  }
+  .checklist .item {
+    padding-left: 10px;
+  }
+  .checklist .item-en {
+    font-family: var(--font-hand);
+  }
+
+  /* Footnote */
+  .footnote {
+    margin-top: 14px;
+    font-size: 1rem;
+    color: #aaa;
+    font-family: var(--font-hand);
+    text-align: right;
+  }
+  .footnote .cjk {
+    font-family: var(--font-cjk);
+  }
+
+  /* Pen doodle arrow */
+  .doodle-arrow {
+    position: absolute;
+    font-family: var(--font-hand);
+    color: #e17055;
+    opacity: 0.6;
+    pointer-events: none;
+  }
+
+  /* Sticky note */
+  .sticky {
+    position: absolute;
+    top: 70px;
+    right: -18px;
+    width: 110px;
+    padding: 10px 12px;
+    background: #fff9b1;
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+    transform: rotate(6deg);
+    font-family: var(--font-mixed);
+    font-size: 0.95rem;
+    color: #6c5b0a;
+    line-height: 1.5;
+    z-index: 3;
+    border-bottom: 3px solid rgba(200,180,50,0.2);
+  }
+
+  /* Print */
+  @media print {
+    body { background: white; padding: 0; }
+    .page { box-shadow: none; transform: none; width: 100%; }
+    .hole { background: white; }
+    .sticky { position: absolute; }
+  }
+
+  @media (max-width: 850px) {
+    body { padding: 10px; }
+    .page { width: 100%; min-height: auto; padding: 40px 30px 30px 55px; }
+    .page::before { left: 42px; }
+    .holes { left: 10px; }
+    .sticky { display: none; }
+    .title { font-size: 2rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="lines"></div>
+  <div class="tape tape-tl"></div>
+  <div class="tape tape-tr"></div>
+  <div class="coffee-stain"></div>
+  <div class="holes">
+    <div class="hole"></div>
+    <div class="hole"></div>
+    <div class="hole"></div>
+  </div>
+
+  <!-- Sticky note -->
+  <div class="sticky">
+    LCC = no luggage<br>
+    +$$ for bags!
+  </div>
+
+  <div class="content">
+
+    <!-- Title -->
+    <div class="title"><span class="plane">&#9992;</span> Japan Trip Planner</div>
+    <div class="subtitle">TPE &#10132; Japan&ensp;&#183;&ensp;roundtrip flight search</div>
+    <div class="date-badge">&#128197;&ensp;5/28 (Thu) ~ 6/1 (Mon) &#8212; 4 nights</div>
+
+    <hr class="divider">
+
+    <!-- 1. Osaka -->
+    <div class="dest dest-osaka">
+      <div class="dest-name">
+        <span class="circled-num" style="color:#0984e3;">1</span>
+        &#127987;&#65039; Osaka &#22823;&#38442;
+        <span class="price-tag price-cheap">TWD 6,718</span>
+        <span class="tag tag-cheapest">Cheapest!</span>
+      </div>
+      <div class="flight-detail">
+        <span class="label">&#10145;&#65039;</span>
+        <span class="time">5/28 18:20</span>&ensp;TPE&#8594;KIX&ensp;
+        <span class="airline">Jetstar Japan GK54</span>&ensp;2h40m
+        <span class="tag tag-direct">direct</span>
+      </div>
+      <div class="flight-detail">
+        <span class="label">&#11013;&#65039;</span>
+        <span class="time">6/1&ensp; 07:50</span>&ensp;KIX&#8594;TPE&ensp;
+        <span class="airline">Peach MM23</span>&ensp;3h05m
+        <span class="tag tag-direct">direct</span>
+      </div>
+    </div>
+
+    <!-- 2. Tokyo -->
+    <div class="dest dest-tokyo">
+      <div class="dest-name">
+        <span class="circled-num" style="color:#6c5ce7;">2</span>
+        &#127959;&#65039; Tokyo &#26481;&#20140;
+        <span class="price-tag price-mid">TWD 7,191</span>
+        <span class="tag tag-best">Best CP!</span>
+      </div>
+      <div class="flight-detail">
+        <span class="label">&#10145;&#65039;</span>
+        <span class="time">5/28 15:30</span>&ensp;TPE&#8594;NRT&ensp;
+        <span class="airline">Scoot TR874</span>&ensp;3h30m
+        <span class="tag tag-direct">direct</span>
+      </div>
+      <div class="flight-detail">
+        <span class="label">&#11013;&#65039;</span>
+        <span class="time">6/1&ensp; 09:15</span>&ensp;NRT&#8594;TPE&ensp;
+        <span class="airline">Jetstar Japan GK13</span>&ensp;3h55m
+        <span class="tag tag-direct">direct</span>
+      </div>
+    </div>
+
+    <!-- 3. Fukuoka -->
+    <div class="dest dest-fukuoka">
+      <div class="dest-name">
+        <span class="circled-num" style="color:#d63031;">3</span>
+        &#9961;&#65039; Fukuoka &#31119;&#23713;
+        <span class="price-tag price-high"><span class="strikethrough">TWD 14,400</span></span>
+      </div>
+      <div class="flight-detail">
+        <span class="label">&#10145;&#65039;</span>
+        <span class="time">5/28 14:25</span>&ensp;TPE&#8594;FUK&ensp;
+        <span class="airline">Tigerair IT720</span>&ensp;2h25m
+        <span class="tag tag-direct">direct</span>
+      </div>
+      <div class="flight-detail">
+        <span class="label">&#11013;&#65039;</span>
+        <span class="time">6/1&ensp; 10:25</span>&ensp;FUK&#8594;TPE&ensp;
+        <span class="airline">Tigerair IT241</span>&ensp;2h30m
+        <span class="tag tag-direct">direct</span>
+      </div>
+      <div class="flight-detail" style="color:#d63031; margin-top:2px; font-family:var(--font-cjk);">
+        &ensp;&ensp;&ensp;&#9888; &#36020;&#20841;&#20493;&#65281;&#38500;&#38750;&#29305;&#21029;&#24819;&#21435;&#21542;&#21063;&#19981;&#25512;&#34214;
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- Recommendation -->
+    <div class="reco">
+      <div class="reco-title">&#128161; My Recommendation</div>
+      <div class="reco-text">
+        <span class="hl">&#22823;&#38442; Osaka TWD 6,718</span> &#8592; &#26368;&#20415;&#23452;&#65281;Jetstar + Peach &#24265;&#33322;&#32068;&#21512;<br>
+        <span class="hl">&#26481;&#20140; Tokyo TWD 7,191</span> &#8592; &#21482;&#22810; ~500&#20803;&#65292;&#21487;&#29609;&#24615;&#26368;&#39640;<br>
+        &#31119;&#23713; Fukuoka &#8592; &#36020;&#20841;&#20493;&#65292;&#38500;&#38750;&#29305;&#21029;&#24819;&#21435;&#21542;&#21063;&#19981;&#25512;&#34214;
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- Checklist -->
+    <div class="checklist">
+      <div class="check-title">&#128221; Checklist</div>
+      <div class="item">&#9744; &#35330;&#27231;&#31080; &#8212; <span class="item-en">book early = save more</span></div>
+      <div class="item">&#9744; &#35330;&#39151;&#24215; &#8212; <span class="item-en">check Agoda / Booking</span></div>
+      <div class="item">&#9744; eSIM / WiFi &#20998;&#20139;&#22120;</div>
+      <div class="item">&#9744; &#34892;&#26446;&#31665;&#28310;&#20633;</div>
+    </div>
+
+    <!-- Footnote -->
+    <div class="footnote">
+      * <span class="cjk">&#24265;&#33322;&#31080;&#20729;&#19981;&#21547;&#34892;&#26446;&#35351;&#36939;&#65292;&#23526;&#38555;&#20729;&#26684;&#21487;&#33021;&#30053;&#26377;&#35722;&#21205;</span><br>
+      Data from Google Flights &#183; 2026-04-13<br>
+      <span style="font-size:0.85rem; color:#bbb;">
+        Fonts: Excalifont + LXGW WenKai TC + Comic Mono
+      </span>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
