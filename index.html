@@ -1,0 +1,1280 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hermes Agent Skills 完整指南</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #232733;
+    --border: #2e3345;
+    --text: #e4e4e7;
+    --text-muted: #9ca3af;
+    --accent: #818cf8;
+    --accent2: #a78bfa;
+    --green: #34d399;
+    --yellow: #fbbf24;
+    --red: #f87171;
+    --blue: #60a5fa;
+    --cyan: #22d3ee;
+    --orange: #fb923c;
+    --pink: #f472b6;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans TC', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    padding: 0;
+  }
+
+  /* Hero */
+  .hero {
+    background: linear-gradient(135deg, #1e1b4b 0%, #312e81 40%, #4c1d95 100%);
+    padding: 80px 40px 60px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle at 30% 50%, rgba(129,140,248,0.1) 0%, transparent 50%),
+                radial-gradient(circle at 70% 50%, rgba(167,139,250,0.08) 0%, transparent 50%);
+    animation: pulse 8s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+  }
+  .hero h1 {
+    font-size: 3rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #c7d2fe, #e0e7ff, #a5b4fc);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    position: relative;
+    margin-bottom: 12px;
+  }
+  .hero .subtitle {
+    color: #a5b4fc;
+    font-size: 1.15rem;
+    position: relative;
+  }
+  .hero .badge {
+    display: inline-block;
+    background: rgba(129,140,248,0.2);
+    border: 1px solid rgba(129,140,248,0.3);
+    color: #c7d2fe;
+    padding: 4px 16px;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    margin-top: 20px;
+    position: relative;
+  }
+
+  /* Layout */
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 24px;
+  }
+
+  /* TOC */
+  .toc {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px 36px;
+    margin-bottom: 48px;
+  }
+  .toc h2 {
+    font-size: 1.3rem;
+    color: var(--accent);
+    margin-bottom: 16px;
+  }
+  .toc-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 8px;
+  }
+  .toc a {
+    color: var(--text-muted);
+    text-decoration: none;
+    padding: 6px 12px;
+    border-radius: 8px;
+    transition: all 0.2s;
+    display: block;
+    font-size: 0.95rem;
+  }
+  .toc a:hover {
+    background: var(--surface2);
+    color: var(--accent);
+  }
+  .toc a .num { color: var(--accent); font-weight: 600; margin-right: 6px; }
+
+  /* Section */
+  .section {
+    margin-bottom: 56px;
+  }
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 28px;
+    padding-bottom: 14px;
+    border-bottom: 2px solid var(--border);
+  }
+  .section-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    flex-shrink: 0;
+  }
+  .section-header h2 {
+    font-size: 1.6rem;
+    font-weight: 700;
+  }
+
+  /* Skill Card */
+  .skill-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    margin-bottom: 20px;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .skill-card:hover {
+    border-color: var(--accent);
+  }
+  .skill-card-header {
+    padding: 20px 24px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    user-select: none;
+  }
+  .skill-card-header:hover {
+    background: var(--surface2);
+  }
+  .skill-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--accent2);
+  }
+  .skill-name code {
+    background: rgba(129,140,248,0.15);
+    padding: 2px 10px;
+    border-radius: 6px;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 0.95rem;
+    margin-right: 10px;
+  }
+  .skill-desc {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-left: 8px;
+  }
+  .chevron {
+    color: var(--text-muted);
+    transition: transform 0.3s;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+  }
+  .skill-card.open .chevron {
+    transform: rotate(180deg);
+  }
+  .skill-card-body {
+    display: none;
+    padding: 0 24px 24px;
+    border-top: 1px solid var(--border);
+  }
+  .skill-card.open .skill-card-body {
+    display: block;
+  }
+
+  /* Info table */
+  .info-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 0.9rem;
+  }
+  .info-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .info-table td:first-child {
+    width: 100px;
+    font-weight: 600;
+    color: var(--accent);
+    white-space: nowrap;
+  }
+  .info-table code {
+    background: var(--surface2);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 0.85rem;
+    color: var(--cyan);
+  }
+
+  /* Code blocks */
+  pre {
+    background: #0d0f16;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 20px;
+    overflow-x: auto;
+    margin: 12px 0;
+    font-size: 0.85rem;
+    line-height: 1.6;
+  }
+  pre code {
+    font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+    color: #e2e8f0;
+    background: none;
+    padding: 0;
+  }
+  .comment { color: #6b7280; }
+  .cmd { color: var(--green); }
+  .flag { color: var(--yellow); }
+  .str { color: var(--orange); }
+
+  /* Labels */
+  .label {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .label-free { background: rgba(52,211,153,0.15); color: var(--green); }
+  .label-cli { background: rgba(96,165,250,0.15); color: var(--blue); }
+  .label-api { background: rgba(251,191,36,0.15); color: var(--yellow); }
+  .label-gpu { background: rgba(248,113,113,0.15); color: var(--red); }
+
+  /* Result box */
+  .result-box {
+    background: linear-gradient(135deg, rgba(52,211,153,0.05), rgba(34,211,238,0.05));
+    border: 1px solid rgba(52,211,153,0.2);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin: 12px 0;
+    font-size: 0.85rem;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    white-space: pre-wrap;
+    line-height: 1.6;
+    color: #d1d5db;
+  }
+  .result-label {
+    color: var(--green);
+    font-weight: 600;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+    display: block;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+
+  /* Note */
+  .note {
+    background: rgba(251,191,36,0.08);
+    border-left: 3px solid var(--yellow);
+    padding: 12px 16px;
+    border-radius: 0 8px 8px 0;
+    margin: 12px 0;
+    font-size: 0.88rem;
+    color: var(--text-muted);
+  }
+
+  /* Appendix tables */
+  .ref-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 0.9rem;
+  }
+  .ref-table th {
+    background: var(--surface2);
+    padding: 12px 16px;
+    text-align: left;
+    font-weight: 600;
+    color: var(--accent);
+    border-bottom: 2px solid var(--border);
+  }
+  .ref-table td {
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .ref-table tr:hover td {
+    background: rgba(129,140,248,0.04);
+  }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    padding: 40px 24px;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    border-top: 1px solid var(--border);
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .hero { padding: 48px 20px 40px; }
+    .hero h1 { font-size: 2rem; }
+    .container { padding: 24px 16px; }
+    .toc { padding: 20px; }
+    .toc-grid { grid-template-columns: 1fr; }
+    .skill-card-header { flex-wrap: wrap; }
+    .skill-desc { display: block; margin-left: 0; margin-top: 4px; }
+  }
+
+  /* Smooth scroll */
+  html { scroll-behavior: smooth; }
+
+  /* Section colors */
+  .c-apple { background: linear-gradient(135deg, #1e3a5f, #1e40af); }
+  .c-dev { background: linear-gradient(135deg, #064e3b, #065f46); }
+  .c-github { background: linear-gradient(135deg, #1f2937, #374151); }
+  .c-creative { background: linear-gradient(135deg, #701a75, #86198f); }
+  .c-media { background: linear-gradient(135deg, #7c2d12, #9a3412); }
+  .c-research { background: linear-gradient(135deg, #1e3a5f, #1e40af); }
+  .c-prod { background: linear-gradient(135deg, #065f46, #047857); }
+  .c-ml { background: linear-gradient(135deg, #7c2d12, #b91c1c); }
+  .c-mcp { background: linear-gradient(135deg, #4c1d95, #6d28d9); }
+  .c-agent { background: linear-gradient(135deg, #0e7490, #0891b2); }
+  .c-other { background: linear-gradient(135deg, #374151, #4b5563); }
+</style>
+</head>
+<body>
+
+<!-- Hero -->
+<div class="hero">
+  <h1>Hermes Agent Skills 完整指南</h1>
+  <p class="subtitle">78 個內建 Skills，依類別分類整理 — 說明、前置需求、用法、結果範例</p>
+  <span class="badge">Nous Research &middot; v16 &middot; 2026-04-13</span>
+</div>
+
+<div class="container">
+
+<!-- TOC -->
+<nav class="toc">
+  <h2>目錄</h2>
+  <div class="toc-grid">
+    <a href="#apple"><span class="num">01</span> Apple 生態系（4）</a>
+    <a href="#dev"><span class="num">02</span> 軟體開發（6）</a>
+    <a href="#github"><span class="num">03</span> GitHub 整合（6）</a>
+    <a href="#creative"><span class="num">04</span> 創意工具（8）</a>
+    <a href="#media"><span class="num">05</span> 媒體處理（4）</a>
+    <a href="#research"><span class="num">06</span> 研究與學術（5）</a>
+    <a href="#prod"><span class="num">07</span> 生產力工具（8）</a>
+    <a href="#ml"><span class="num">08</span> MLOps / AI 模型（22）</a>
+    <a href="#mcp"><span class="num">09</span> MCP 整合（2）</a>
+    <a href="#agent"><span class="num">10</span> 自主 AI Agent（4）</a>
+    <a href="#other"><span class="num">11</span> 其他工具（7）</a>
+    <a href="#appendix"><span class="num">附</span> 快速參考表</a>
+  </div>
+</nav>
+
+<!-- ===================== 1. APPLE ===================== -->
+<div class="section" id="apple">
+  <div class="section-header">
+    <div class="section-icon c-apple">&#63743;</div>
+    <h2>1. Apple 生態系</h2>
+  </div>
+
+  <!-- apple-notes -->
+  <div class="skill-card">
+    <div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')">
+      <div><span class="skill-name"><code>apple-notes</code></span><span class="skill-desc">Apple 備忘錄管理</span></div>
+      <span class="chevron">&#9662;</span>
+    </div>
+    <div class="skill-card-body">
+      <table class="info-table">
+        <tr><td>功能</td><td>建立、檢視、搜尋、編輯 Apple Notes，透過 iCloud 同步所有裝置</td></tr>
+        <tr><td>前置需求</td><td>macOS + <code>brew tap antoniorodr/memo && brew install antoniorodr/memo/memo</code></td></tr>
+        <tr><td>授權</td><td>System Settings &rarr; Privacy &rarr; Automation（允許 Notes.app）</td></tr>
+        <tr><td>標籤</td><td><span class="label label-cli">需安裝 CLI</span></td></tr>
+      </table>
+<pre><code><span class="comment"># 列出所有筆記</span>
+<span class="cmd">memo notes</span>
+
+<span class="comment"># 搜尋筆記</span>
+<span class="cmd">memo notes</span> <span class="flag">-s</span> <span class="str">"會議紀錄"</span>
+
+<span class="comment"># 依資料夾篩選</span>
+<span class="cmd">memo notes</span> <span class="flag">-f</span> <span class="str">"工作"</span>
+
+<span class="comment"># 建立筆記</span>
+<span class="cmd">memo notes</span> <span class="flag">-a</span> <span class="str">"專案規劃"</span>
+
+<span class="comment"># 編輯筆記（互動選擇）</span>
+<span class="cmd">memo notes</span> <span class="flag">-e</span>
+
+<span class="comment"># 匯出為 Markdown/HTML</span>
+<span class="cmd">memo notes</span> <span class="flag">-ex</span></code></pre>
+      <div class="result-box"><span class="result-label">結果範例</span>┌──────┬─────────────────┬──────────┬───────────────────┐
+│  ID  │     Title       │  Folder  │    Modified       │
+├──────┼─────────────────┼──────────┼───────────────────┤
+│  1   │ 專案規劃         │ 工作     │ 2026-04-13 10:30  │
+│  2   │ 買菜清單         │ 個人     │ 2026-04-12 18:00  │
+└──────┴─────────────────┴──────────┴───────────────────┘</div>
+    </div>
+  </div>
+
+  <!-- apple-reminders -->
+  <div class="skill-card">
+    <div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')">
+      <div><span class="skill-name"><code>apple-reminders</code></span><span class="skill-desc">Apple 提醒事項</span></div>
+      <span class="chevron">&#9662;</span>
+    </div>
+    <div class="skill-card-body">
+      <table class="info-table">
+        <tr><td>功能</td><td>管理 Apple Reminders，建立/完成/刪除待辦，同步 iOS</td></tr>
+        <tr><td>前置需求</td><td>macOS + <code>brew install steipete/tap/remindctl</code></td></tr>
+        <tr><td>授權</td><td><code>remindctl authorize</code></td></tr>
+        <tr><td>標籤</td><td><span class="label label-cli">需安裝 CLI</span></td></tr>
+      </table>
+<pre><code><span class="comment"># 查看今天 / 本週 / 逾期 / 全部</span>
+<span class="cmd">remindctl today</span>
+<span class="cmd">remindctl week</span>
+<span class="cmd">remindctl overdue</span>
+<span class="cmd">remindctl all</span>
+
+<span class="comment"># 建立提醒</span>
+<span class="cmd">remindctl add</span> <span class="str">"買牛奶"</span>
+<span class="cmd">remindctl add</span> <span class="flag">--title</span> <span class="str">"打電話給客戶"</span> <span class="flag">--list</span> 工作 <span class="flag">--due</span> tomorrow
+<span class="cmd">remindctl add</span> <span class="flag">--title</span> <span class="str">"交報告"</span> <span class="flag">--due</span> <span class="str">"2026-04-20 09:00"</span>
+
+<span class="comment"># 完成提醒</span>
+<span class="cmd">remindctl complete</span> 1 2 3
+
+<span class="comment"># JSON 輸出</span>
+<span class="cmd">remindctl today</span> <span class="flag">--json</span></code></pre>
+      <div class="result-box"><span class="result-label">結果範例</span>Today's Reminders:
+  1. [&#9675;] 買牛奶                    (Personal)
+  2. [&#9675;] 打電話給客戶    due 14:00  (工作)
+  3. [&#10003;] 回覆 email               (工作)  completed</div>
+    </div>
+  </div>
+
+  <!-- imessage -->
+  <div class="skill-card">
+    <div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')">
+      <div><span class="skill-name"><code>imessage</code></span><span class="skill-desc">iMessage / SMS 訊息</span></div>
+      <span class="chevron">&#9662;</span>
+    </div>
+    <div class="skill-card-body">
+      <table class="info-table">
+        <tr><td>功能</td><td>透過 macOS Messages.app 發送/讀取 iMessage 和 SMS</td></tr>
+        <tr><td>前置需求</td><td>macOS + Messages.app 已登入 + <code>brew install steipete/tap/imsg</code></td></tr>
+        <tr><td>授權</td><td>System Settings &rarr; Privacy &rarr; Full Disk Access（終端機）</td></tr>
+        <tr><td>標籤</td><td><span class="label label-cli">需安裝 CLI</span></td></tr>
+      </table>
+<pre><code><span class="comment"># 列出最近對話</span>
+<span class="cmd">imsg chats</span> <span class="flag">--limit</span> 10 <span class="flag">--json</span>
+
+<span class="comment"># 查看對話歷史</span>
+<span class="cmd">imsg history</span> <span class="flag">--chat-id</span> 1 <span class="flag">--limit</span> 20 <span class="flag">--json</span>
+
+<span class="comment"># 發送訊息</span>
+<span class="cmd">imsg send</span> <span class="flag">--to</span> <span class="str">"+886912345678"</span> <span class="flag">--text</span> <span class="str">"我晚點到"</span>
+
+<span class="comment"># 附加檔案</span>
+<span class="cmd">imsg send</span> <span class="flag">--to</span> <span class="str">"+886912345678"</span> <span class="flag">--text</span> <span class="str">"看一下這個"</span> <span class="flag">--file</span> /path/to/image.jpg
+
+<span class="comment"># 監聽新訊息</span>
+<span class="cmd">imsg watch</span> <span class="flag">--chat-id</span> 1 <span class="flag">--attachments</span></code></pre>
+      <div class="result-box"><span class="result-label">結果範例（JSON）</span>[
+  {
+    "chatId": 1,
+    "displayName": "媽媽",
+    "lastMessage": "晚餐吃什麼？",
+    "date": "2026-04-13T12:30:00Z"
+  }
+]</div>
+      <div class="note">發送前 Hermes 會先確認收件人和內容，不會自動發送。</div>
+    </div>
+  </div>
+
+  <!-- findmy -->
+  <div class="skill-card">
+    <div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')">
+      <div><span class="skill-name"><code>findmy</code></span><span class="skill-desc">尋找我的裝置 / AirTag</span></div>
+      <span class="chevron">&#9662;</span>
+    </div>
+    <div class="skill-card-body">
+      <table class="info-table">
+        <tr><td>功能</td><td>透過 FindMy.app 追蹤 Apple 裝置和 AirTag 位置</td></tr>
+        <tr><td>前置需求</td><td>macOS + iCloud 已登入 + Screen Recording 權限</td></tr>
+        <tr><td>選配</td><td><code>brew install steipete/tap/peekaboo</code>（更可靠的 UI 自動化）</td></tr>
+        <tr><td>標籤</td><td><span class="label label-free">免費</span></td></tr>
+      </table>
+<pre><code><span class="comment"># 方法 1：AppleScript + 截圖</span>
+<span class="cmd">osascript</span> -e 'tell application "FindMy" to activate'
+sleep 3
+<span class="cmd">screencapture</span> -w -o /tmp/findmy.png
+<span class="comment"># Hermes 用 vision 分析截圖讀取位置</span>
+
+<span class="comment"># 方法 2：Peekaboo（推薦）</span>
+<span class="cmd">peekaboo see</span> <span class="flag">--app</span> <span class="str">"FindMy"</span> <span class="flag">--annotate</span> <span class="flag">--path</span> /tmp/findmy-ui.png
+<span class="cmd">peekaboo click</span> <span class="flag">--on</span> B3 <span class="flag">--app</span> <span class="str">"FindMy"</span></code></pre>
+      <div class="result-box"><span class="result-label">結果範例</span>裝置位置：
+  iPhone 15 Pro  — 台北市信義區松仁路 100 號（5 分鐘前更新）
+  AirPods Pro    — 目前位置：與 iPhone 同位置
+  AirTag "鑰匙" — 台北市大安區忠孝東路 200 號（30 分鐘前更新）</div>
+      <div class="note">AirTag 需要 FindMy 視窗保持前景才會持續更新位置。</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== 2. SOFTWARE DEV ===================== -->
+<div class="section" id="dev">
+  <div class="section-header">
+    <div class="section-icon c-dev">&#128187;</div>
+    <h2>2. 軟體開發</h2>
+  </div>
+
+  <div class="skill-card">
+    <div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')">
+      <div><span class="skill-name"><code>plan</code></span><span class="skill-desc">計畫模式 — 只分析不修改程式碼</span></div>
+      <span class="chevron">&#9662;</span>
+    </div>
+    <div class="skill-card-body">
+      <table class="info-table">
+        <tr><td>功能</td><td>進入純規劃模式，分析架構和需求，不修改任何程式碼</td></tr>
+        <tr><td>前置需求</td><td>無</td></tr>
+        <tr><td>標籤</td><td><span class="label label-free">免費</span></td></tr>
+      </table>
+<pre><code><span class="comment"># 在 Hermes 對話中說：</span>
+幫我規劃一個用戶認證系統的架構</code></pre>
+      <div class="result-box"><span class="result-label">結果範例</span>計畫：用戶認證系統
+
+1. 技術選型
+   - JWT + Refresh Token 機制
+   - bcrypt 密碼雜湊
+
+2. API 端點設計
+   - POST /auth/register
+   - POST /auth/login
+   - POST /auth/refresh
+
+3. 資料庫 Schema
+   - users 表：id, email, password_hash, created_at
+   - refresh_tokens 表：id, user_id, token, expires_at
+
+（不會修改任何檔案，只提供分析）</div>
+    </div>
+  </div>
+
+  <div class="skill-card">
+    <div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')">
+      <div><span class="skill-name"><code>writing-plans</code></span><span class="skill-desc">撰寫詳細實作計畫</span></div>
+      <span class="chevron">&#9662;</span>
+    </div>
+    <div class="skill-card-body">
+      <table class="info-table">
+        <tr><td>功能</td><td>撰寫詳細的實作計畫，包含分階段任務、檔案清單、依賴關係</td></tr>
+        <tr><td>前置需求</td><td>無</td></tr>
+        <tr><td>標籤</td><td><span class="label label-free">免費</span></td></tr>
+      </table>
+      <div class="result-box"><span class="result-label">結果範例</span>實作計畫：REST &rarr; GraphQL 遷移
+
+Phase 1：基礎設施（1-2 天）
+  [ ] 安裝 Apollo Server 依賴
+  [ ] 建立 schema.graphql
+  [ ] 設定 GraphQL endpoint /graphql
+
+Phase 2：Schema 定義（2-3 天）
+  [ ] 定義 User type
+  [ ] 定義 Query / Mutation
+  [ ] 撰寫 resolvers
+
+風險評估：
+  - 前端需同步修改 API 呼叫
+  - 需要保留 REST 端點過渡期</div>
+    </div>
+  </div>
+
+  <div class="skill-card">
+    <div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')">
+      <div><span class="skill-name"><code>test-driven-development</code></span><span class="skill-desc">TDD 開發流程</span></div>
+      <span class="chevron">&#9662;</span>
+    </div>
+    <div class="skill-card-body">
+      <table class="info-table">
+        <tr><td>功能</td><td>嚴格的 RED-GREEN-REFACTOR TDD 循環，先寫測試再寫實作</td></tr>
+        <tr><td>前置需求</td><td>專案已有測試框架（Jest, pytest, etc.）</td></tr>
+        <tr><td>標籤</td><td><span class="label label-free">免費</span></td></tr>
+      </table>
+      <div class="result-box"><span class="result-label">流程範例</span>RED  — 先寫失敗的測試：
+   test("滿 1000 打 9 折", () =&gt; {
+     const cart = new Cart([{ price: 600 }, { price: 500 }]);
+     expect(cart.total()).toBe(990);
+   });
+   &rarr; 執行測試 &rarr; FAIL
+
+GREEN — 寫最少的程式碼讓測試通過：
+   total() {
+     const sum = this.items.reduce((s, i) =&gt; s + i.price, 0);
+     return sum &gt;= 1000 ? sum * 0.9 : sum;
+   }
+   &rarr; 執行測試 &rarr; PASS
+
+REFACTOR — 重構但保持測試通過
+   &rarr; 執行測試 &rarr; PASS</div>
+    </div>
+  </div>
+
+  <div class="skill-card">
+    <div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')">
+      <div><span class="skill-name"><code>systematic-debugging</code></span><span class="skill-desc">四階段系統化除錯</span></div>
+      <span class="chevron">&#9662;</span>
+    </div>
+    <div class="skill-card-body">
+      <table class="info-table">
+        <tr><td>功能</td><td>收集證據 &rarr; 形成假設 &rarr; 驗證 &rarr; 修復</td></tr>
+        <tr><td>前置需求</td><td>無</td></tr>
+        <tr><td>標籤</td><td><span class="label label-free">免費</span></td></tr>
+      </table>
+      <div class="result-box"><span class="result-label">流程範例</span>Phase 1：收集證據
+  - 檢查瀏覽器 console 錯誤
+  - 檢查 Network tab 的 API 回應
+
+Phase 2：形成假設
+  假設 A：Token 過期時間設定太短
+  假設 B：Cookie SameSite 屬性導致跨域失效
+
+Phase 3：逐一驗證
+  ✗ 假設 A：Token TTL 為 1 小時，正常
+  ✓ 假設 B：SameSite=Strict 導致 cookie 未攜帶
+
+Phase 4：修復
+  &rarr; 將 SameSite 改為 Lax，加入 Domain 設定</div>
+    </div>
+  </div>
+
+  <div class="skill-card">
+    <div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')">
+      <div><span class="skill-name"><code>subagent-driven-development</code></span><span class="skill-desc">多 Agent 協作開發</span></div>
+      <span class="chevron">&#9662;</span>
+    </div>
+    <div class="skill-card-body">
+      <table class="info-table">
+        <tr><td>功能</td><td>將任務分派給多個子 agent 並行執行，兩階段 review</td></tr>
+        <tr><td>前置需求</td><td>無</td></tr>
+        <tr><td>標籤</td><td><span class="label label-free">免費</span></td></tr>
+      </table>
+      <div class="result-box"><span class="result-label">流程範例</span>主 Agent：拆分任務
+  ├── 子 Agent A &rarr; 重構 auth 模組
+  ├── 子 Agent B &rarr; 重構 payment 模組
+  └── 主 Agent 等待兩者完成
+
+Review 階段 1：各子 agent 自我檢查
+Review 階段 2：主 agent 整合審查，確認無衝突
+&rarr; 合併結果</div>
+    </div>
+  </div>
+
+  <div class="skill-card">
+    <div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')">
+      <div><span class="skill-name"><code>requesting-code-review</code></span><span class="skill-desc">程式碼審查</span></div>
+      <span class="chevron">&#9662;</span>
+    </div>
+    <div class="skill-card-body">
+      <table class="info-table">
+        <tr><td>功能</td><td>提交前的驗證流程：lint、測試、安全掃描、code review</td></tr>
+        <tr><td>前置需求</td><td>無</td></tr>
+        <tr><td>標籤</td><td><span class="label label-free">免費</span></td></tr>
+      </table>
+      <div class="result-box"><span class="result-label">結果範例</span>Code Review 報告
+
+&#10003; Lint：無問題
+&#10003; 測試：12/12 通過
+&#9888; 安全性：第 45 行有潛在 SQL injection 風險
+   &rarr; 建議使用 parameterized query
+&#9888; 效能：第 78 行 N+1 query 問題
+   &rarr; 建議使用 eager loading
+
+整體評分：7/10 — 修復安全性問題後可合併</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== 3. GITHUB ===================== -->
+<div class="section" id="github">
+  <div class="section-header">
+    <div class="section-icon c-github">&#128025;</div>
+    <h2>3. GitHub 整合</h2>
+  </div>
+
+  <div class="skill-card">
+    <div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')">
+      <div><span class="skill-name"><code>github-auth</code></span><span class="skill-desc">GitHub 認證設定（PAT / SSH / gh CLI）</span></div>
+      <span class="chevron">&#9662;</span>
+    </div>
+    <div class="skill-card-body">
+      <table class="info-table">
+        <tr><td>功能</td><td>設定 GitHub 認證：Personal Access Token、SSH、gh CLI</td></tr>
+        <tr><td>前置需求</td><td>Git 已安裝</td></tr>
+      </table>
+<pre><code><span class="comment"># 方法 1：gh CLI（推薦）</span>
+<span class="cmd">brew install gh</span>
+<span class="cmd">gh auth login</span>
+
+<span class="comment"># 方法 2：SSH key</span>
+<span class="cmd">ssh-keygen</span> <span class="flag">-t</span> ed25519 <span class="flag">-C</span> <span class="str">"your@email.com"</span>
+
+<span class="comment"># 方法 3：Git credential store</span>
+<span class="cmd">git config</span> <span class="flag">--global</span> credential.helper store</code></pre>
+    </div>
+  </div>
+
+  <div class="skill-card">
+    <div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')">
+      <div><span class="skill-name"><code>github-repo-management</code></span><span class="skill-desc">Repo 管理（Clone / Create / Fork / Release）</span></div>
+      <span class="chevron">&#9662;</span>
+    </div>
+    <div class="skill-card-body">
+<pre><code><span class="cmd">gh repo clone</span> owner/repo
+<span class="cmd">gh repo create</span> my-project <span class="flag">--public --clone</span>
+<span class="cmd">gh repo fork</span> owner/repo <span class="flag">--clone</span>
+<span class="cmd">gh release create</span> v1.0.0 <span class="flag">--title</span> <span class="str">"v1.0.0"</span> <span class="flag">--notes</span> <span class="str">"Initial release"</span>
+<span class="cmd">gh workflow list</span>
+<span class="cmd">gh run list</span></code></pre>
+    </div>
+  </div>
+
+  <div class="skill-card">
+    <div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')">
+      <div><span class="skill-name"><code>github-pr-workflow</code></span><span class="skill-desc">PR 完整生命週期</span></div>
+      <span class="chevron">&#9662;</span>
+    </div>
+    <div class="skill-card-body">
+<pre><code><span class="cmd">git checkout</span> <span class="flag">-b</span> feature/add-login
+<span class="comment"># ... 修改程式碼 ...</span>
+<span class="cmd">gh pr create</span> <span class="flag">--title</span> <span class="str">"Add login feature"</span> <span class="flag">--body</span> <span class="str">"## Summary ..."</span>
+<span class="cmd">gh pr status</span>
+<span class="cmd">gh pr checks</span> 123
+<span class="cmd">gh pr merge</span> 123 <span class="flag">--squash</span></code></pre>
+      <div class="result-box"><span class="result-label">結果範例</span>Creating pull request for feature/add-login into main
+https://github.com/owner/repo/pull/123
+
+&#10003; CI checks passed
+&#10003; 1 approval received
+&rarr; Ready to merge</div>
+    </div>
+  </div>
+
+  <div class="skill-card">
+    <div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')">
+      <div><span class="skill-name"><code>github-code-review</code></span><span class="skill-desc">PR Code Review</span></div>
+      <span class="chevron">&#9662;</span>
+    </div>
+    <div class="skill-card-body">
+<pre><code><span class="cmd">gh pr diff</span> 123
+<span class="cmd">gh pr review</span> 123 <span class="flag">--approve</span> <span class="flag">--body</span> <span class="str">"LGTM!"</span>
+<span class="cmd">gh pr review</span> 123 <span class="flag">--request-changes</span> <span class="flag">--body</span> <span class="str">"請修正第 45 行"</span></code></pre>
+    </div>
+  </div>
+
+  <div class="skill-card">
+    <div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')">
+      <div><span class="skill-name"><code>github-issues</code></span><span class="skill-desc">Issue 管理</span></div>
+      <span class="chevron">&#9662;</span>
+    </div>
+    <div class="skill-card-body">
+<pre><code><span class="cmd">gh issue list</span>
+<span class="cmd">gh issue list</span> <span class="flag">--label</span> bug <span class="flag">--state</span> open
+<span class="cmd">gh issue create</span> <span class="flag">--title</span> <span class="str">"登入頁 404 錯誤"</span> <span class="flag">--body</span> <span class="str">"步驟：..."</span> <span class="flag">--label</span> bug
+<span class="cmd">gh issue view</span> 42
+<span class="cmd">gh issue close</span> 42 <span class="flag">--comment</span> <span class="str">"已在 PR #50 修復"</span></code></pre>
+    </div>
+  </div>
+
+  <div class="skill-card">
+    <div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')">
+      <div><span class="skill-name"><code>codebase-inspection</code></span><span class="skill-desc">程式碼行數統計與語言分佈</span></div>
+      <span class="chevron">&#9662;</span>
+    </div>
+    <div class="skill-card-body">
+      <table class="info-table">
+        <tr><td>前置需求</td><td><code>pip install pygount</code></td></tr>
+      </table>
+<pre><code><span class="cmd">pygount</span> <span class="flag">--format=summary</span> .</code></pre>
+      <div class="result-box"><span class="result-label">結果範例</span>Language    Files    Code    Comment    Blank    Total
+─────────────────────────────────────────────────────
+TypeScript    45    3,200      480       620    4,300
+Python        12      890      120       180    1,190
+JSON           8      340        0        10      350
+─────────────────────────────────────────────────────
+Total         65    4,430      600       810    5,840</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== 4. CREATIVE ===================== -->
+<div class="section" id="creative">
+  <div class="section-header">
+    <div class="section-icon c-creative">&#127912;</div>
+    <h2>4. 創意工具</h2>
+  </div>
+
+  <div class="skill-card"><div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')"><div><span class="skill-name"><code>ascii-art</code></span><span class="skill-desc">ASCII 藝術生成（571 種字體）</span></div><span class="chevron">&#9662;</span></div>
+    <div class="skill-card-body">
+      <table class="info-table"><tr><td>前置需求</td><td><code>pip install pyfiglet</code> / <code>brew install cowsay boxes toilet</code></td></tr></table>
+<pre><code><span class="cmd">pyfiglet</span> <span class="str">"Hello"</span>
+echo <span class="str">"Hermes!"</span> | <span class="cmd">cowsay</span>
+<span class="cmd">ascii-image-converter</span> image.png <span class="flag">--color</span></code></pre>
+      <div class="result-box"><span class="result-label">結果範例</span> _   _      _ _
+| | | | ___| | | ___
+| |_| |/ _ \ | |/ _ \
+|  _  |  __/ | | (_) |
+|_| |_|\___|_|_|\___/</div>
+    </div>
+  </div>
+
+  <div class="skill-card"><div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')"><div><span class="skill-name"><code>ascii-video</code></span><span class="skill-desc">影片轉 ASCII 動畫（MP4 / GIF）</span></div><span class="chevron">&#9662;</span></div>
+    <div class="skill-card-body"><table class="info-table"><tr><td>功能</td><td>影片&rarr;ASCII、音訊反應式視覺化、生成式動畫、歌詞疊加、即時終端渲染</td></tr><tr><td>前置需求</td><td>Python + ffmpeg</td></tr></table></div>
+  </div>
+
+  <div class="skill-card"><div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')"><div><span class="skill-name"><code>excalidraw</code></span><span class="skill-desc">手繪風格圖表（架構圖、流程圖）</span></div><span class="chevron">&#9662;</span></div>
+    <div class="skill-card-body"><table class="info-table"><tr><td>功能</td><td>生成 .excalidraw JSON，支援架構圖、流程圖、序列圖、概念圖</td></tr><tr><td>前置需求</td><td>無</td></tr><tr><td>開啟方式</td><td>匯入 excalidraw.com 即可檢視</td></tr><tr><td>標籤</td><td><span class="label label-free">免費</span></td></tr></table></div>
+  </div>
+
+  <div class="skill-card"><div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')"><div><span class="skill-name"><code>ideation</code></span><span class="skill-desc">腦力激盪 / 創意發想</span></div><span class="chevron">&#9662;</span></div>
+    <div class="skill-card-body"><table class="info-table"><tr><td>功能</td><td>概念探索、創意發想、點子生成</td></tr><tr><td>前置需求</td><td>無</td></tr><tr><td>標籤</td><td><span class="label label-free">免費</span></td></tr></table></div>
+  </div>
+
+  <div class="skill-card"><div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')"><div><span class="skill-name"><code>manim-video</code></span><span class="skill-desc">3Blue1Brown 風格數學動畫</span></div><span class="chevron">&#9662;</span></div>
+    <div class="skill-card-body"><table class="info-table"><tr><td>功能</td><td>用 Manim 製作數學/技術動畫：演算法視覺化、方程式推導、架構圖</td></tr><tr><td>前置需求</td><td><code>pip install manim</code> + LaTeX + ffmpeg</td></tr><tr><td>輸出</td><td>MP4 影片</td></tr></table></div>
+  </div>
+
+  <div class="skill-card"><div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')"><div><span class="skill-name"><code>p5js</code></span><span class="skill-desc">p5.js 互動視覺藝術</span></div><span class="chevron">&#9662;</span></div>
+    <div class="skill-card-body"><table class="info-table"><tr><td>功能</td><td>生成式藝術、資料視覺化、互動體驗、3D 場景、音訊反應</td></tr><tr><td>前置需求</td><td>瀏覽器</td></tr><tr><td>輸出</td><td>HTML 檔案，瀏覽器開啟即可互動</td></tr><tr><td>標籤</td><td><span class="label label-free">免費</span></td></tr></table></div>
+  </div>
+
+  <div class="skill-card"><div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')"><div><span class="skill-name"><code>popular-web-designs</code></span><span class="skill-desc">54 套知名網站設計模板</span></div><span class="chevron">&#9662;</span></div>
+    <div class="skill-card-body"><table class="info-table"><tr><td>功能</td><td>來自 Stripe、Linear、Vercel、Notion、Airbnb 等真實網站的設計系統</td></tr><tr><td>前置需求</td><td>無</td></tr><tr><td>用法</td><td>「用 Stripe 的設計風格幫我做一個定價頁面」</td></tr><tr><td>輸出</td><td>符合指定風格的 HTML/CSS</td></tr><tr><td>標籤</td><td><span class="label label-free">免費</span></td></tr></table></div>
+  </div>
+
+  <div class="skill-card"><div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')"><div><span class="skill-name"><code>songwriting-and-ai-music</code></span><span class="skill-desc">AI 音樂創作 / 歌詞寫作</span></div><span class="chevron">&#9662;</span></div>
+    <div class="skill-card-body"><table class="info-table"><tr><td>功能</td><td>歌曲創作指導、Suno 提示詞工程、歌詞技巧、語音技巧</td></tr><tr><td>前置需求</td><td>Suno 帳號（選配）</td></tr></table>
+      <div class="result-box"><span class="result-label">結果範例</span>標題：Debug 人生
+
+[Verse 1]
+凌晨三點的螢幕光
+Stack trace 像是一道牆
+console.log 一行一行
+找不到那個 bug 在哪裡藏
+
+[Chorus]
+Git push, git pull, 每天在 loop
+Coffee driven development...
+
+Suno 提示詞：indie rock, upbeat, male vocals, coding theme</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== 5. MEDIA ===================== -->
+<div class="section" id="media">
+  <div class="section-header">
+    <div class="section-icon c-media">&#127909;</div>
+    <h2>5. 媒體處理</h2>
+  </div>
+
+  <div class="skill-card"><div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')"><div><span class="skill-name"><code>gif-search</code></span><span class="skill-desc">Tenor GIF 搜尋下載</span></div><span class="chevron">&#9662;</span></div>
+    <div class="skill-card-body"><table class="info-table"><tr><td>前置需求</td><td><code>curl</code> + <code>jq</code> + <code>TENOR_API_KEY</code></td></tr><tr><td>標籤</td><td><span class="label label-api">需 API Key</span></td></tr></table>
+<pre><code><span class="cmd">curl</span> <span class="flag">-s</span> <span class="str">"https://tenor.googleapis.com/v2/search?q=coding&amp;key=$TENOR_API_KEY&amp;limit=5"</span> | <span class="cmd">jq</span> '.results[].media_formats.gif.url'</code></pre></div>
+  </div>
+
+  <div class="skill-card"><div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')"><div><span class="skill-name"><code>heartmula</code></span><span class="skill-desc">開源音樂生成（類似 Suno）</span></div><span class="chevron">&#9662;</span></div>
+    <div class="skill-card-body"><table class="info-table"><tr><td>功能</td><td>從歌詞 + 標籤生成完整歌曲，支援多語言</td></tr><tr><td>前置需求</td><td>GPU（建議 24GB+ VRAM）+ Python</td></tr><tr><td>標籤</td><td><span class="label label-gpu">需 GPU</span></td></tr></table></div>
+  </div>
+
+  <div class="skill-card"><div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')"><div><span class="skill-name"><code>songsee</code></span><span class="skill-desc">音訊頻譜/特徵視覺化</span></div><span class="chevron">&#9662;</span></div>
+    <div class="skill-card-body"><table class="info-table"><tr><td>功能</td><td>生成 mel、chroma、MFCC、tempogram 等視覺化圖</td></tr><tr><td>前置需求</td><td>Go 語言環境</td></tr></table>
+<pre><code><span class="cmd">songsee spectrogram</span> <span class="flag">--input</span> song.mp3 <span class="flag">--output</span> spec.png
+<span class="cmd">songsee mel</span> <span class="flag">--input</span> song.mp3 <span class="flag">--output</span> mel.png</code></pre></div>
+  </div>
+
+  <div class="skill-card"><div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')"><div><span class="skill-name"><code>youtube-content</code></span><span class="skill-desc">YouTube 影片字幕擷取與摘要</span></div><span class="chevron">&#9662;</span></div>
+    <div class="skill-card-body"><table class="info-table"><tr><td>功能</td><td>擷取字幕，轉換為章節、摘要、部落格文章</td></tr><tr><td>前置需求</td><td><code>pip install youtube-transcript-api</code></td></tr></table>
+      <div class="result-box"><span class="result-label">結果範例</span>影片摘要：「React Server Components 完整教學」
+
+章節：
+  00:00 - 簡介
+  02:30 - 什麼是 RSC
+  08:15 - 實作範例
+  15:00 - 效能比較
+
+重點：
+  1. RSC 讓元件在伺服器端渲染
+  2. 可直接在元件中存取資料庫
+  3. 與傳統 SSR 的差異...</div></div>
+  </div>
+</div>
+
+<!-- ===================== 6. RESEARCH ===================== -->
+<div class="section" id="research">
+  <div class="section-header">
+    <div class="section-icon c-research">&#128218;</div>
+    <h2>6. 研究與學術</h2>
+  </div>
+
+  <div class="skill-card"><div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')"><div><span class="skill-name"><code>arxiv</code></span><span class="skill-desc">arXiv 論文搜尋 / 下載 / 摘要</span></div><span class="chevron">&#9662;</span></div>
+    <div class="skill-card-body"><table class="info-table"><tr><td>前置需求</td><td><code>pip install arxiv</code></td></tr></table>
+      <div class="result-box"><span class="result-label">結果範例</span>arXiv 搜尋結果：RAG
+
+1. [2026.04123] "Adaptive RAG with Dynamic Chunking"
+   作者：Zhang et al.
+   摘要：We propose a novel approach to...
+
+2. [2026.03987] "RAG vs Fine-tuning: A Comprehensive Benchmark"
+   ...</div></div>
+  </div>
+
+  <div class="skill-card"><div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')"><div><span class="skill-name"><code>blogwatcher</code></span><span class="skill-desc">部落格更新監控</span></div><span class="chevron">&#9662;</span></div>
+    <div class="skill-card-body"><table class="info-table"><tr><td>功能</td><td>監控指定部落格/網站的更新</td></tr><tr><td>前置需求</td><td>無</td></tr><tr><td>標籤</td><td><span class="label label-free">免費</span></td></tr></table></div>
+  </div>
+
+  <div class="skill-card"><div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')"><div><span class="skill-name"><code>llm-wiki</code></span><span class="skill-desc">LLM 知識百科（架構/訓練/評估）</span></div><span class="chevron">&#9662;</span></div>
+    <div class="skill-card-body"><table class="info-table"><tr><td>功能</td><td>涵蓋 Flash Attention、RLHF、LoRA、量化等 LLM 相關知識</td></tr><tr><td>前置需求</td><td>無</td></tr><tr><td>標籤</td><td><span class="label label-free">免費</span></td></tr></table></div>
+  </div>
+
+  <div class="skill-card"><div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')"><div><span class="skill-name"><code>polymarket</code></span><span class="skill-desc">Polymarket 預測市場查詢</span></div><span class="chevron">&#9662;</span></div>
+    <div class="skill-card-body"><table class="info-table"><tr><td>功能</td><td>查詢預測市場事件和機率</td></tr><tr><td>前置需求</td><td>無</td></tr><tr><td>標籤</td><td><span class="label label-free">免費</span></td></tr></table></div>
+  </div>
+
+  <div class="skill-card"><div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')"><div><span class="skill-name"><code>research-paper-writing</code></span><span class="skill-desc">學術論文撰寫（NeurIPS / ICML / ICLR）</span></div><span class="chevron">&#9662;</span></div>
+    <div class="skill-card-body"><table class="info-table"><tr><td>功能</td><td>端對端論文流程：專案設定 &rarr; 文獻回顧 &rarr; 實驗設計 &rarr; 撰寫 &rarr; 審查 &rarr; 投稿</td></tr><tr><td>前置需求</td><td>LaTeX 環境</td></tr></table></div>
+  </div>
+</div>
+
+<!-- ===================== 7. PRODUCTIVITY ===================== -->
+<div class="section" id="prod">
+  <div class="section-header">
+    <div class="section-icon c-prod">&#128736;</div>
+    <h2>7. 生產力工具</h2>
+  </div>
+
+  <div class="skill-card"><div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')"><div><span class="skill-name"><code>obsidian</code></span><span class="skill-desc">Obsidian 筆記管理</span></div><span class="chevron">&#9662;</span></div>
+    <div class="skill-card-body"><table class="info-table"><tr><td>功能</td><td>讀取、搜尋、建立 Obsidian vault 中的筆記，支援 [[Wikilinks]]</td></tr><tr><td>前置需求</td><td>設定 <code>OBSIDIAN_VAULT_PATH</code> 環境變數</td></tr></table>
+<pre><code>VAULT="${OBSIDIAN_VAULT_PATH:-$HOME/Documents/Obsidian Vault}"
+<span class="cmd">grep</span> <span class="flag">-rli</span> <span class="str">"keyword"</span> "$VAULT" <span class="flag">--include="*.md"</span>
+<span class="cmd">cat</span> "$VAULT/Note Name.md"</code></pre></div>
+  </div>
+
+  <div class="skill-card"><div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')"><div><span class="skill-name"><code>himalaya</code></span><span class="skill-desc">CLI Email 客戶端（IMAP/SMTP）</span></div><span class="chevron">&#9662;</span></div>
+    <div class="skill-card-body"><table class="info-table"><tr><td>功能</td><td>收發郵件、搜尋、回覆、轉寄、附件、多帳號</td></tr><tr><td>前置需求</td><td><code>brew install himalaya</code> + 設定 <code>~/.config/himalaya/config.toml</code></td></tr><tr><td>標籤</td><td><span class="label label-cli">需安裝 CLI</span></td></tr></table>
+<pre><code><span class="cmd">himalaya envelope list</span>                                 <span class="comment"># 收件匣</span>
+<span class="cmd">himalaya message read</span> 42                               <span class="comment"># 讀信</span>
+<span class="cmd">himalaya envelope list</span> from john@example.com subject meeting  <span class="comment"># 搜尋</span>
+<span class="cmd">himalaya attachment download</span> 42 <span class="flag">--dir</span> ~/Downloads       <span class="comment"># 附件</span>
+<span class="cmd">himalaya</span> <span class="flag">--account</span> work <span class="cmd">envelope list</span>                   <span class="comment"># 切換帳號</span></code></pre></div>
+  </div>
+
+  <div class="skill-card"><div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')"><div><span class="skill-name"><code>notion</code></span><span class="skill-desc">Notion 頁面與資料庫管理</span></div><span class="chevron">&#9662;</span></div>
+    <div class="skill-card-body"><table class="info-table"><tr><td>前置需求</td><td>Notion API Token</td></tr><tr><td>標籤</td><td><span class="label label-api">需 API Key</span></td></tr></table></div>
+  </div>
+
+  <div class="skill-card"><div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')"><div><span class="skill-name"><code>linear</code></span><span class="skill-desc">Linear 專案管理（Issues / Cycles）</span></div><span class="chevron">&#9662;</span></div>
+    <div class="skill-card-body"><table class="info-table"><tr><td>前置需求</td><td>Linear API Key</td></tr><tr><td>標籤</td><td><span class="label label-api">需 API Key</span></td></tr></table></div>
+  </div>
+
+  <div class="skill-card"><div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')"><div><span class="skill-name"><code>nano-pdf</code></span><span class="skill-desc">PDF 讀取與分析</span></div><span class="chevron">&#9662;</span></div>
+    <div class="skill-card-body"><table class="info-table"><tr><td>前置需求</td><td>無</td></tr><tr><td>標籤</td><td><span class="label label-free">免費</span></td></tr></table></div>
+  </div>
+
+  <div class="skill-card"><div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')"><div><span class="skill-name"><code>powerpoint</code></span><span class="skill-desc">PowerPoint 簡報製作</span></div><span class="chevron">&#9662;</span></div>
+    <div class="skill-card-body"><table class="info-table"><tr><td>前置需求</td><td><code>pip install python-pptx</code></td></tr><tr><td>輸出</td><td>.pptx 檔案</td></tr></table></div>
+  </div>
+
+  <div class="skill-card"><div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')"><div><span class="skill-name"><code>google-workspace</code></span><span class="skill-desc">Google Docs / Sheets / Drive</span></div><span class="chevron">&#9662;</span></div>
+    <div class="skill-card-body"><table class="info-table"><tr><td>前置需求</td><td>Google API 憑證</td></tr><tr><td>標籤</td><td><span class="label label-api">需 API Key</span></td></tr></table></div>
+  </div>
+
+  <div class="skill-card"><div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')"><div><span class="skill-name"><code>ocr-and-documents</code></span><span class="skill-desc">OCR 文字辨識</span></div><span class="chevron">&#9662;</span></div>
+    <div class="skill-card-body"><table class="info-table"><tr><td>功能</td><td>圖片/掃描件 OCR 文字辨識</td></tr><tr><td>前置需求</td><td>依方法而定（Tesseract 或 vision API）</td></tr></table></div>
+  </div>
+</div>
+
+<!-- ===================== 8. MLOPS ===================== -->
+<div class="section" id="ml">
+  <div class="section-header">
+    <div class="section-icon c-ml">&#129302;</div>
+    <h2>8. MLOps / AI 模型</h2>
+  </div>
+
+  <div class="skill-card"><div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')"><div><span class="skill-name"><code>huggingface-hub</code></span><span class="skill-desc">HuggingFace 模型/Dataset 管理</span></div><span class="chevron">&#9662;</span></div>
+    <div class="skill-card-body"><table class="info-table"><tr><td>功能</td><td>搜尋、下載、上傳模型；SQL 查詢 datasets；部署推理端點</td></tr><tr><td>前置需求</td><td><code>HF_TOKEN</code></td></tr><tr><td>標籤</td><td><span class="label label-api">需 API Key</span></td></tr></table>
+<pre><code><span class="cmd">hf download</span> meta-llama/Llama-3-8B
+<span class="cmd">hf upload</span> my-model ./output
+<span class="cmd">hf datasets sql</span> <span class="str">"SELECT * FROM dataset WHERE label='positive' LIMIT 10"</span></code></pre></div>
+  </div>
+
+  <div class="skill-card"><div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')"><div><span class="skill-name"><code>whisper</code></span><span class="skill-desc">OpenAI Whisper 語音轉文字</span></div><span class="chevron">&#9662;</span></div>
+    <div class="skill-card-body"><table class="info-table"><tr><td>功能</td><td>多語言語音辨識</td></tr><tr><td>前置需求</td><td><code>pip install openai-whisper</code></td></tr></table>
+<pre><code><span class="cmd">whisper</span> audio.mp3 <span class="flag">--language</span> zh <span class="flag">--model</span> medium</code></pre>
+      <div class="result-box"><span class="result-label">結果範例</span>[00:00.000 --&gt; 00:03.500] 大家好，今天要介紹的是
+[00:03.500 --&gt; 00:07.200] Hermes Agent 的完整功能</div></div>
+  </div>
+
+  <div class="skill-card"><div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')"><div><span class="skill-name"><code>fine-tuning-with-trl</code></span><span class="skill-desc">HuggingFace TRL 微調（SFT / DPO / PPO）</span></div><span class="chevron">&#9662;</span></div><div class="skill-card-body"><table class="info-table"><tr><td>前置需求</td><td>GPU + <code>pip install trl</code></td></tr><tr><td>標籤</td><td><span class="label label-gpu">需 GPU</span></td></tr></table></div></div>
+
+  <div class="skill-card"><div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')"><div><span class="skill-name"><code>unsloth</code></span><span class="skill-desc">2-5x 加速微調，減少 80% 記憶體</span></div><span class="chevron">&#9662;</span></div><div class="skill-card-body"><table class="info-table"><tr><td>前置需求</td><td>GPU + <code>pip install unsloth</code></td></tr><tr><td>標籤</td><td><span class="label label-gpu">需 GPU</span></td></tr></table></div></div>
+
+  <div class="skill-card"><div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')"><div><span class="skill-name"><code>axolotl</code></span><span class="skill-desc">YAML 設定式 LLM 微調框架</span></div><span class="chevron">&#9662;</span></div><div class="skill-card-body"><table class="info-table"><tr><td>前置需求</td><td>GPU + Docker 或本地安裝</td></tr><tr><td>標籤</td><td><span class="label label-gpu">需 GPU</span></td></tr></table></div></div>
+
+  <div class="skill-card"><div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')"><div><span class="skill-name"><code>grpo-rl-training</code></span><span class="skill-desc">GRPO 強化學習訓練</span></div><span class="chevron">&#9662;</span></div><div class="skill-card-body"><table class="info-table"><tr><td>前置需求</td><td>GPU + TRL</td></tr><tr><td>標籤</td><td><span class="label label-gpu">需 GPU</span></td></tr></table></div></div>
+
+  <div class="skill-card"><div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')"><div><span class="skill-name"><code>peft-fine-tuning</code></span><span class="skill-desc">LoRA / QLoRA / Prefix Tuning 參數高效微調</span></div><span class="chevron">&#9662;</span></div><div class="skill-card-body"><table class="info-table"><tr><td>前置需求</td><td>GPU + <code>pip install peft</code></td></tr><tr><td>標籤</td><td><span class="label label-gpu">需 GPU</span></td></tr></table></div></div>
+
+  <div class="skill-card"><div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')"><div><span class="skill-name"><code>pytorch-fsdp</code></span><span class="skill-desc">PyTorch FSDP 多 GPU 分散式訓練</span></div><span class="chevron">&#9662;</span></div><div class="skill-card-body"><table class="info-table"><tr><td>前置需求</td><td>多 GPU 環境</td></tr><tr><td>標籤</td><td><span class="label label-gpu">需 GPU</span></td></tr></table></div></div>
+
+  <div class="skill-card"><div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')"><div><span class="skill-name"><code>stable-diffusion-image-generation</code></span><span class="skill-desc">Stable Diffusion 文字轉圖片</span></div><span class="chevron">&#9662;</span></div><div class="skill-card-body"><table class="info-table"><tr><td>前置需求</td><td>GPU + <code>pip install diffusers</code></td></tr><tr><td>標籤</td><td><span class="label label-gpu">需 GPU</span></td></tr></table></div></div>
+
+  <div class="skill-card"><div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')"><div><span class="skill-name"><code>serving-llms-vllm</code></span><span class="skill-desc">vLLM 高效能 LLM 推理部署</span></div><span class="chevron">&#9662;</span></div><div class="skill-card-body"><table class="info-table"><tr><td>前置需求</td><td>GPU + <code>pip install vllm</code></td></tr><tr><td>標籤</td><td><span class="label label-gpu">需 GPU</span></td></tr></table></div></div>
+
+  <div class="skill-card"><div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')"><div><span class="skill-name"><code>dspy</code></span><span class="skill-desc">DSPy 程式化 LLM Pipeline</span></div><span class="chevron">&#9662;</span></div><div class="skill-card-body"><table class="info-table"><tr><td>前置需求</td><td><code>pip install dspy-ai</code></td></tr></table></div></div>
+
+  <div class="skill-card"><div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')"><div><span class="skill-name"><code>clip</code></span><span class="skill-desc">CLIP 圖文匹配 / 零樣本分類</span></div><span class="chevron">&#9662;</span></div><div class="skill-card-body"><table class="info-table"><tr><td>前置需求</td><td><code>pip install clip</code></td></tr></table></div></div>
+
+  <div class="skill-card"><div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')"><div><span class="skill-name"><code>audiocraft-audio-generation</code></span><span class="skill-desc">Meta MusicGen / AudioGen 音樂音效生成</span></div><span class="chevron">&#9662;</span></div><div class="skill-card-body"><table class="info-table"><tr><td>前置需求</td><td>GPU + <code>pip install audiocraft</code></td></tr><tr><td>標籤</td><td><span class="label label-gpu">需 GPU</span></td></tr></table></div></div>
+
+  <div class="skill-card"><div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')"><div><span class="skill-name"><code>segment-anything-model</code></span><span class="skill-desc">Meta SAM 通用影像分割</span></div><span class="chevron">&#9662;</span></div><div class="skill-card-body"><table class="info-table"><tr><td>前置需求</td><td>GPU + <code>pip install segment-anything</code></td></tr><tr><td>標籤</td><td><span class="label label-gpu">需 GPU</span></td></tr></table></div></div>
+
+  <div class="skill-card"><div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')"><div><span class="skill-name"><code>modal-serverless-gpu</code></span><span class="skill-desc">Modal 雲端無伺服器 GPU</span></div><span class="chevron">&#9662;</span></div><div class="skill-card-body"><table class="info-table"><tr><td>功能</td><td>無需自備 GPU，在 Modal 平台執行 GPU 任務</td></tr><tr><td>前置需求</td><td>Modal 帳號 + <code>pip install modal</code></td></tr></table></div></div>
+
+  <div class="skill-card"><div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')"><div><span class="skill-name"><code>guidance</code></span><span class="skill-desc">Guidance 框架結構化 LLM 輸出</span></div><span class="chevron">&#9662;</span></div><div class="skill-card-body"><table class="info-table"><tr><td>前置需求</td><td><code>pip install guidance</code></td></tr></table></div></div>
+
+  <div class="skill-card"><div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')"><div><span class="skill-name"><code>gguf-quantization</code></span><span class="skill-desc">模型量化為 GGUF 格式</span></div><span class="chevron">&#9662;</span></div><div class="skill-card-body"><table class="info-table"><tr><td>功能</td><td>將模型量化為 GGUF 格式，供 llama.cpp 使用</td></tr><tr><td>前置需求</td><td>llama.cpp</td></tr></table></div></div>
+
+  <div class="skill-card"><div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')"><div><span class="skill-name"><code>llama-cpp</code></span><span class="skill-desc">llama.cpp 本地 LLM 推理</span></div><span class="chevron">&#9662;</span></div><div class="skill-card-body"><table class="info-table"><tr><td>前置需求</td><td><code>brew install llama.cpp</code></td></tr></table></div></div>
+
+  <div class="skill-card"><div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')"><div><span class="skill-name"><code>outlines</code></span><span class="skill-desc">Outlines 正則/JSON 約束 LLM 輸出</span></div><span class="chevron">&#9662;</span></div><div class="skill-card-body"><table class="info-table"><tr><td>前置需求</td><td><code>pip install outlines</code></td></tr></table></div></div>
+
+  <div class="skill-card"><div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')"><div><span class="skill-name"><code>evaluating-llms-harness</code></span><span class="skill-desc">lm-evaluation-harness 模型評估</span></div><span class="chevron">&#9662;</span></div><div class="skill-card-body"><table class="info-table"><tr><td>前置需求</td><td><code>pip install lm-eval</code></td></tr></table></div></div>
+
+  <div class="skill-card"><div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')"><div><span class="skill-name"><code>weights-and-biases</code></span><span class="skill-desc">W&amp;B 實驗追蹤與視覺化</span></div><span class="chevron">&#9662;</span></div><div class="skill-card-body"><table class="info-table"><tr><td>前置需求</td><td><code>pip install wandb</code> + <code>WANDB_API_KEY</code></td></tr><tr><td>標籤</td><td><span class="label label-api">需 API Key</span></td></tr></table></div></div>
+
+  <div class="skill-card"><div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')"><div><span class="skill-name"><code>obliteratus</code></span><span class="skill-desc">LLM 模型壓縮工具</span></div><span class="chevron">&#9662;</span></div><div class="skill-card-body"><table class="info-table"><tr><td>功能</td><td>模型壓縮與最佳化</td></tr></table></div></div>
+</div>
+
+<!-- ===================== 9. MCP ===================== -->
+<div class="section" id="mcp">
+  <div class="section-header">
+    <div class="section-icon c-mcp">&#128268;</div>
+    <h2>9. MCP 整合</h2>
+  </div>
+
+  <div class="skill-card"><div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')"><div><span class="skill-name"><code>mcporter</code></span><span class="skill-desc">MCP 工具發現與即時呼叫</span></div><span class="chevron">&#9662;</span></div>
+    <div class="skill-card-body"><table class="info-table"><tr><td>功能</td><td>發現並直接呼叫 MCP 伺服器/工具，無需預設定</td></tr><tr><td>前置需求</td><td>Node.js（透過 npx）</td></tr></table>
+<pre><code><span class="cmd">mcporter list</span>
+<span class="cmd">mcporter call</span> &lt;server.tool&gt; <span class="flag">--args</span> <span class="str">'{"key": "value"}'</span></code></pre></div>
+  </div>
+
+  <div class="skill-card"><div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')"><div><span class="skill-name"><code>native-mcp</code></span><span class="skill-desc">原生 MCP 客戶端（啟動自動連接）</span></div><span class="chevron">&#9662;</span></div>
+    <div class="skill-card-body"><table class="info-table"><tr><td>功能</td><td>啟動時自動連接 MCP 伺服器，注入為原生 Hermes 工具</td></tr><tr><td>前置需求</td><td><code>pip install mcp</code> + config.yaml 設定</td></tr></table>
+<pre><code><span class="comment"># ~/.hermes/config.yaml</span>
+mcp_servers:
+  - name: <span class="str">"filesystem"</span>
+    command: <span class="str">"npx"</span>
+    args: [<span class="str">"-y"</span>, <span class="str">"@modelcontextprotocol/server-filesystem"</span>, <span class="str">"/path"</span>]</code></pre></div>
+  </div>
+</div>
+
+<!-- ===================== 10. AGENTS ===================== -->
+<div class="section" id="agent">
+  <div class="section-header">
+    <div class="section-icon c-agent">&#129504;</div>
+    <h2>10. 自主 AI Agent</h2>
+  </div>
+
+  <div class="skill-card"><div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')"><div><span class="skill-name"><code>claude-code</code></span><span class="skill-desc">委派程式碼任務給 Claude Code CLI</span></div><span class="chevron">&#9662;</span></div>
+    <div class="skill-card-body"><table class="info-table"><tr><td>前置需求</td><td><code>npm install -g @anthropic-ai/claude-code</code> + 已認證</td></tr></table>
+<pre><code><span class="comment"># 一次性任務</span>
+<span class="cmd">claude</span> <span class="flag">-p</span> <span class="str">"幫我重構 auth middleware"</span>
+
+<span class="comment"># 互動模式（需要 tmux）</span>
+<span class="cmd">tmux new-session</span> <span class="flag">-d -s</span> claude
+<span class="cmd">tmux send-keys</span> <span class="flag">-t</span> claude <span class="str">"claude"</span> Enter</code></pre></div>
+  </div>
+
+  <div class="skill-card"><div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')"><div><span class="skill-name"><code>codex</code></span><span class="skill-desc">委派給 OpenAI Codex CLI</span></div><span class="chevron">&#9662;</span></div>
+    <div class="skill-card-body"><table class="info-table"><tr><td>前置需求</td><td><code>npm install -g @openai/codex</code></td></tr></table>
+<pre><code><span class="cmd">codex exec</span> <span class="str">"新增 dark mode 支援"</span>
+<span class="cmd">codex exec</span> <span class="str">"修復所有 TypeScript 錯誤"</span> <span class="flag">--full-auto</span></code></pre></div>
+  </div>
+
+  <div class="skill-card"><div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')"><div><span class="skill-name"><code>hermes-agent</code></span><span class="skill-desc">Hermes 自我委派（啟動子實例）</span></div><span class="chevron">&#9662;</span></div>
+    <div class="skill-card-body"><table class="info-table"><tr><td>功能</td><td>啟動另一個 Hermes 實例處理子任務</td></tr><tr><td>前置需求</td><td>Hermes 已安裝</td></tr></table></div>
+  </div>
+
+  <div class="skill-card"><div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')"><div><span class="skill-name"><code>opencode</code></span><span class="skill-desc">OpenCode 自主程式碼 Agent</span></div><span class="chevron">&#9662;</span></div>
+    <div class="skill-card-body"><table class="info-table"><tr><td>前置需求</td><td><code>npm i -g opencode-ai@latest</code></td></tr></table>
+<pre><code><span class="cmd">opencode run</span> <span class="str">"重構資料庫層"</span>
+<span class="cmd">opencode run</span> <span class="str">"加入單元測試"</span> <span class="flag">--model</span> claude-sonnet-4-6</code></pre></div>
+  </div>
+</div>
+
+<!-- ===================== 11. OTHER ===================== -->
+<div class="section" id="other">
+  <div class="section-header">
+    <div class="section-icon c-other">&#128295;</div>
+    <h2>11. 其他工具</h2>
+  </div>
+
+  <div class="skill-card"><div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')"><div><span class="skill-name"><code>webhook-subscriptions</code></span><span class="skill-desc">Webhook 事件訂閱（GitHub / Stripe / CI）</span></div><span class="chevron">&#9662;</span></div>
+    <div class="skill-card-body"><table class="info-table"><tr><td>前置需求</td><td><code>hermes gateway setup</code></td></tr></table>
+<pre><code><span class="cmd">hermes webhook subscribe</span>
+<span class="cmd">hermes webhook list</span></code></pre></div>
+  </div>
+
+  <div class="skill-card"><div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')"><div><span class="skill-name"><code>find-nearby</code></span><span class="skill-desc">附近地點搜尋（OpenStreetMap）</span></div><span class="chevron">&#9662;</span></div>
+    <div class="skill-card-body"><table class="info-table"><tr><td>前置需求</td><td>無（不需 API key）</td></tr><tr><td>標籤</td><td><span class="label label-free">免費</span></td></tr></table>
+<pre><code><span class="cmd">python3 find_nearby.py</span> <span class="flag">--near</span> <span class="str">"台北101"</span> <span class="flag">--type</span> restaurant <span class="flag">--radius</span> 500</code></pre>
+      <div class="result-box"><span class="result-label">結果範例</span>台北101 附近的餐廳（500m 內）：
+  1. 鼎泰豐（信義店）— 120m
+  2. 欣葉台菜 — 230m
+  3. 添好運 — 340m</div></div>
+  </div>
+
+  <div class="skill-card"><div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')"><div><span class="skill-name"><code>jupyter-live-kernel</code></span><span class="skill-desc">Jupyter 即時 Python REPL</span></div><span class="chevron">&#9662;</span></div>
+    <div class="skill-card-body"><table class="info-table"><tr><td>功能</td><td>透過 Jupyter kernel 執行 Python，保持變數狀態</td></tr><tr><td>前置需求</td><td><code>uv</code> + JupyterLab 執行中</td></tr></table></div>
+  </div>
+
+  <div class="skill-card"><div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')"><div><span class="skill-name"><code>godmode</code></span><span class="skill-desc">LLM 紅隊安全測試</span></div><span class="chevron">&#9662;</span></div>
+    <div class="skill-card-body"><table class="info-table"><tr><td>前置需求</td><td><code>OPENROUTER_API_KEY</code></td></tr><tr><td>標籤</td><td><span class="label label-api">需 API Key</span></td></tr></table>
+      <div class="note">僅限授權的安全測試和研究用途。</div></div>
+  </div>
+
+  <div class="skill-card"><div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')"><div><span class="skill-name"><code>openhue</code></span><span class="skill-desc">Philips Hue 智慧燈控制</span></div><span class="chevron">&#9662;</span></div>
+    <div class="skill-card-body"><table class="info-table"><tr><td>前置需求</td><td>Hue Bridge 在區網內</td></tr></table>
+<pre><code><span class="cmd">openhue set light</span> <span class="str">"客廳"</span> <span class="flag">--on --brightness</span> 50 <span class="flag">--color</span> warm
+<span class="cmd">openhue set light</span> <span class="str">"臥室"</span> <span class="flag">--off</span></code></pre></div>
+  </div>
+
+  <div class="skill-card"><div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')"><div><span class="skill-name"><code>xitter</code></span><span class="skill-desc">X/Twitter 社群管理</span></div><span class="chevron">&#9662;</span></div>
+    <div class="skill-card-body"><table class="info-table"><tr><td>功能</td><td>發文、搜尋、按讚、轉推、書籤</td></tr><tr><td>前置需求</td><td>X API 5 組憑證</td></tr><tr><td>標籤</td><td><span class="label label-api">需 API Key</span></td></tr></table>
+<pre><code><span class="cmd">x-cli tweet post</span> <span class="str">"Hello from Hermes Agent!"</span>
+<span class="cmd">x-cli user get</span> elonmusk
+<span class="cmd">x-cli me mentions</span></code></pre></div>
+  </div>
+
+  <div class="skill-card"><div class="skill-card-header" onclick="this.parentElement.classList.toggle('open')"><div><span class="skill-name"><code>dogfood</code></span><span class="skill-desc">Hermes Agent 內部自我測試</span></div><span class="chevron">&#9662;</span></div>
+    <div class="skill-card-body"><table class="info-table"><tr><td>功能</td><td>Hermes Agent 的品質保證 / 自我測試工具</td></tr><tr><td>前置需求</td><td>無</td></tr></table></div>
+  </div>
+</div>
+
+<!-- ===================== APPENDIX ===================== -->
+<div class="section" id="appendix">
+  <div class="section-header">
+    <div class="section-icon c-other">&#128203;</div>
+    <h2>附錄：快速參考表</h2>
+  </div>
+
+  <h3 style="color:var(--green); margin: 24px 0 12px;">免費即用（不需 API Key）</h3>
+  <table class="ref-table">
+    <tr><th>Skill</th><th>功能</th></tr>
+    <tr><td><code>apple-notes</code></td><td>Apple 備忘錄</td></tr>
+    <tr><td><code>apple-reminders</code></td><td>Apple 提醒事項</td></tr>
+    <tr><td><code>imessage</code></td><td>iMessage</td></tr>
+    <tr><td><code>findmy</code></td><td>尋找裝置</td></tr>
+    <tr><td><code>plan</code> / <code>writing-plans</code></td><td>開發規劃</td></tr>
+    <tr><td><code>test-driven-development</code></td><td>TDD</td></tr>
+    <tr><td><code>systematic-debugging</code></td><td>除錯</td></tr>
+    <tr><td><code>requesting-code-review</code></td><td>Code Review</td></tr>
+    <tr><td><code>excalidraw</code></td><td>圖表繪製</td></tr>
+    <tr><td><code>ascii-art</code></td><td>ASCII 藝術</td></tr>
+    <tr><td><code>p5js</code></td><td>互動藝術</td></tr>
+    <tr><td><code>popular-web-designs</code></td><td>54 套設計模板</td></tr>
+    <tr><td><code>nano-pdf</code></td><td>PDF 處理</td></tr>
+    <tr><td><code>find-nearby</code></td><td>附近搜尋</td></tr>
+    <tr><td><code>obsidian</code></td><td>筆記管理</td></tr>
+    <tr><td><code>powerpoint</code></td><td>簡報製作</td></tr>
+  </table>
+
+  <h3 style="color:var(--blue); margin: 24px 0 12px;">需要額外安裝 CLI 工具</h3>
+  <table class="ref-table">
+    <tr><th>Skill</th><th>需安裝</th></tr>
+    <tr><td><code>apple-notes</code></td><td><code>memo</code></td></tr>
+    <tr><td><code>apple-reminders</code></td><td><code>remindctl</code></td></tr>
+    <tr><td><code>imessage</code></td><td><code>imsg</code></td></tr>
+    <tr><td><code>himalaya</code></td><td><code>himalaya</code></td></tr>
+    <tr><td><code>codebase-inspection</code></td><td><code>pygount</code></td></tr>
+    <tr><td><code>whisper</code></td><td><code>openai-whisper</code></td></tr>
+    <tr><td><code>songsee</code></td><td>Go 語言環境</td></tr>
+  </table>
+
+  <h3 style="color:var(--yellow); margin: 24px 0 12px;">需要 API Key</h3>
+  <table class="ref-table">
+    <tr><th>Skill</th><th>需要</th></tr>
+    <tr><td><code>gif-search</code></td><td><code>TENOR_API_KEY</code></td></tr>
+    <tr><td><code>huggingface-hub</code></td><td><code>HF_TOKEN</code></td></tr>
+    <tr><td><code>weights-and-biases</code></td><td><code>WANDB_API_KEY</code></td></tr>
+    <tr><td><code>xitter</code></td><td>X API 5 組憑證</td></tr>
+    <tr><td><code>notion</code></td><td>Notion API Token</td></tr>
+    <tr><td><code>linear</code></td><td>Linear API Key</td></tr>
+    <tr><td><code>google-workspace</code></td><td>Google API 憑證</td></tr>
+    <tr><td><code>godmode</code></td><td><code>OPENROUTER_API_KEY</code></td></tr>
+  </table>
+
+  <h3 style="color:var(--red); margin: 24px 0 12px;">需要 GPU</h3>
+  <table class="ref-table">
+    <tr><th>Skill</th><th>說明</th></tr>
+    <tr><td><code>fine-tuning-with-trl</code></td><td>SFT / DPO / PPO 微調</td></tr>
+    <tr><td><code>unsloth</code></td><td>加速微調</td></tr>
+    <tr><td><code>axolotl</code></td><td>YAML 設定微調</td></tr>
+    <tr><td><code>grpo-rl-training</code></td><td>強化學習</td></tr>
+    <tr><td><code>peft-fine-tuning</code></td><td>LoRA / QLoRA</td></tr>
+    <tr><td><code>pytorch-fsdp</code></td><td>分散式訓練</td></tr>
+    <tr><td><code>stable-diffusion-image-generation</code></td><td>圖片生成</td></tr>
+    <tr><td><code>serving-llms-vllm</code></td><td>LLM 推理部署</td></tr>
+    <tr><td><code>audiocraft-audio-generation</code></td><td>音樂/音效生成</td></tr>
+    <tr><td><code>segment-anything-model</code></td><td>影像分割</td></tr>
+    <tr><td><code>heartmula</code></td><td>AI 歌曲生成</td></tr>
+  </table>
+</div>
+
+</div><!-- /container -->
+
+<div class="footer">
+  Hermes Agent Skills 完整指南 &middot; 78 個內建 Skills &middot; Nous Research &middot; 2026-04-13<br>
+  Generated by Claude Code
+</div>
+
+<script>
+// Expand all / collapse all with keyboard shortcut
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'e' && e.altKey) {
+    const cards = document.querySelectorAll('.skill-card');
+    const allOpen = [...cards].every(c => c.classList.contains('open'));
+    cards.forEach(c => c.classList.toggle('open', !allOpen));
+  }
+});
+</script>
+
+</body>
+</html>
